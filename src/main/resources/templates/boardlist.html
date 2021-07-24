@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    th, td {
+      text-align: center;
+    }
+    .contenttr:hover{
+      background-color: #e7e7e7;
+
+    }
+    .btn-primary{
+      background-color: #5b9bbf;
+      border-color: #3a7593;
+    }
+    .btn-primary:hover{
+      background-color: #3d81a0;
+      border-color: #3a7593;
+    }
+    a{
+      color: black;
+      text-decoration: none;
+    }
+    a:hover{
+      color: #262626;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container" style="max-width: 1100px; min-width: 800px">
+  <div class="py-5 text-center">
+    <h2>게시판</h2>
+  </div>
+
+  <hr class="my-4">
+  <div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th style="width: 8%">#</th>
+        <th style="width: 69%">제목</th>
+        <th style="width: 13%">글쓴이</th>
+        <th style="width: 10%">조회수</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="contenttr">
+        <td>1</td>
+        <td style="text-align: left"><a href="item.html">테스트 상품1xxxxxxxxxxxxxxfzcxzafdafdsfsaddxfzcxzafdaf</a></td>
+        <td>10000</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td style="text-align: left"><a href="item.html">테스트 상품2</a></td>
+        <td>20000</td>
+        <td>20</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-primary float-end"
+              onclick="location.href='addForm.html'" type="button">글쓰기</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
