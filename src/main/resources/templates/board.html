@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    th, td {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .contenttr:hover{
+      background-color: #e7e7e7;
+
+    }
+    .btn-primary{
+      background-color: #5b9bbf;
+      border-color: #3a7593;
+    }
+    .btn-primary:hover{
+      background-color: #3d81a0;
+      border-color: #3a7593;
+    }
+    a{
+      color: black;
+      text-decoration: none;
+    }
+    a:hover{
+      color: #262626;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container" style="max-width: 1100px; min-width: 800px">
+  <div class="py-5 text-center">
+    <h2><a style="text-decoration: none" th:href="@{/board/list}">게시판</a></h2>
+  </div>
+
+  <hr class="my-4">
+  <div class="text-body">
+    <h4 style="" th:text="${board.title}">제목</h4>
+    <div style="float:left;">
+      <span th:text="${board.writeId}">글쓴이 </span>
+      <span style="font-weight: bolder">  |  </span>
+      <span th:text="${board.writeDate}">날짜 </span>
+    </div>
+    <div  style="float: right;">
+      <span style="font-weight: bolder">조회수 </span>
+      <span th:text="${board.hit}">조회수</span>
+    </div>
+  </div>
+  <br>
+  <hr class="my-4">
+  <br>
+  <p th:text="${board.content}"></p>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <div>
+    <hr class="my-xl-4"/>
+    <table class="table table-striped ">
+      <thead>
+      <tr>
+        <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${commentCnt}개|">#</th>
+        <th style="width: 75%"></th>
+        <th style="width: 15%"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="comment : ${comments}">
+        <td style="text-align: left" th:text="${comment.writerId}">#</td>
+        <td style="text-align: left;padding-left: 5px; font-size: 17px" th:text="${comment.content}"></td>
+        <td style="text-align: left;font-size: 15px" th:text="${comment.writeDate}">글쓴이</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <br/>
+  <form action="index.html" th:action method="post">
+    <textarea id="content" name="content" class="form-control" placeholder="댓글을 입력하세요" style="height: 120px"></textarea>
+    <div class="col">
+      <button class="btn btn-primary float-end" type="submit">등록</button>
+    </div>
+  </form>
+  <br/>
+  <br/>
+<div th:replace="~{fragment/listFragment :: listFragment}"></div>
+</body>
+</html>
