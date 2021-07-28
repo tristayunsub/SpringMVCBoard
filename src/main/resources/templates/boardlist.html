@@ -14,11 +14,11 @@
     }
     .btn-primary{
       background-color: #5b9bbf;
-      border-color: #3a7593;
+      border-color: #4f8aaa;
     }
     .btn-primary:hover{
       background-color: #3d81a0;
-      border-color: #3a7593;
+      border-color: #4f8aaa;
     }
     a{
       color: black;
@@ -27,6 +27,16 @@
     a:hover{
       color: #262626;
       text-decoration: underline;
+    }
+    .page-item.active .page-link {
+      background-color: #3d81a0;
+      border-color: #35708b;
+    }
+    .page-link{
+      color: #4a96ba;
+    }
+    .page-item.disabled{
+      color: gray;
     }
   </style>
 </head>
@@ -37,38 +47,7 @@
   </div>
 
   <hr class="my-4">
-  <div>
-    <table class="table">
-      <thead>
-      <tr>
-        <th style="width: 8%">#</th>
-        <th style="width: 69%">제목</th>
-        <th style="width: 13%">글쓴이</th>
-        <th style="width: 10%">조회수</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr class="contenttr">
-        <td>1</td>
-        <td style="text-align: left"><a href="item.html">테스트 상품1xxxxxxxxxxxxxxfzcxzafdafdsfsaddxfzcxzafdaf</a></td>
-        <td>10000</td>
-        <td>10</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td style="text-align: left"><a href="item.html">테스트 상품2</a></td>
-        <td>20000</td>
-        <td>20</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="row">
-    <div class="col">
-      <button class="btn btn-primary float-end"
-              onclick="location.href='addForm.html'" type="button">글쓰기</button>
-    </div>
-  </div>
+  <div th:replace="~{fragment/listFragment :: listFragment}"></div>
 </div>
 </body>
 </html>
