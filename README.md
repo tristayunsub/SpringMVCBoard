@@ -1,6 +1,6 @@
 SpringMVC Board Project
 ## 목차
-1. [**개발 목적**](https://github.com/hsp0404/SpringMVCBoard/new/master?readme=1#%EA%B0%9C%EB%B0%9C%EB%AA%A9%EC%A0%81)
+1. [**개발 목적**](https://github.com/hsp0404/SpringMVCBoard/tree/master#%EA%B0%9C%EB%B0%9C%EB%AA%A9%EC%A0%81)
 
 2. [**개발 환경**](https://github.com/hsp0404/SpringMVCBoard/new/master?readme=1#%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD)
 
