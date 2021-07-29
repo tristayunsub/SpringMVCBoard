@@ -29,6 +29,13 @@
       color: #262626;
       text-decoration: underline;
     }
+    .page-item.active .page-link {
+      background-color: #3d81a0;
+      border-color: #35708b;
+    }
+    .page-link{
+      color: #4a96ba;
+    }
   </style>
 </head>
 <body>
@@ -88,6 +95,8 @@
   </form>
   <br/>
   <br/>
-<div th:replace="~{fragment/listFragment :: listFragment}"></div>
+  <div th:replace="~{fragment/listFragment :: copyParam(${boards}, ${startNum}, ${query},${lastNum},${endNum})}">
+  </div>
+</div>
 </body>
 </html>

@@ -1,17 +1,15 @@
-package hello.practiceprj.service;
+package hello.practiceprj.service.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
 import hello.practiceprj.mapper.BoardMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BoardServiceImpl implements BoardService {
-    private BoardMapper boardMapper;
+    private final BoardMapper boardMapper;
 
     public BoardServiceImpl(BoardMapper boardMapper) {
         this.boardMapper = boardMapper;

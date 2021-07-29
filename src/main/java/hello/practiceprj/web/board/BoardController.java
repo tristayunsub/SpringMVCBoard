@@ -1,9 +1,14 @@
-package hello.practiceprj.controller;
+package hello.practiceprj.web.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
+import hello.practiceprj.domain.User;
+import hello.practiceprj.service.board.BoardServiceImpl;
+import hello.practiceprj.service.user.UserServiceImpl;
+import hello.practiceprj.web.argumentResolver.Login;
+import hello.practiceprj.web.session.SessionConst;
 import hello.practiceprj.web.validation.SaveBoardForm;
-import hello.practiceprj.service.BoardService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,15 +22,16 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping("/board")
+@RequiredArgsConstructor
 public class BoardController {
-    BoardService boardService;
 
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
+    private final BoardServiceImpl boardService;
+    private final UserServiceImpl userService;
 
     @RequestMapping("/list")
-    public String list(Model model, @RequestParam (value = "p", required = false, defaultValue = "1") int queryNum) {
+    public String list(Model model,
+                       @RequestParam (value = "p", required = false, defaultValue = "1") int queryNum,
+                       @Login User loginUser) {
         List<Board> boards = boardService.getBoardList();
         int lastNum = (boards.size()/15)+1;
         model.addAttribute("boards", boards);
@@ -33,6 +39,9 @@ public class BoardController {
         model.addAttribute("query", queryNum);
         model.addAttribute("startNum",(boards.size()-(queryNum-1)*15)-14);
         model.addAttribute("endNum", boards.size()-(queryNum-1)*15);
+        if(loginUser != null){
+        model.addAttribute("loginUser", loginUser);
+        }
         return "boardlist";
     }
 
@@ -61,9 +70,10 @@ public class BoardController {
     @PostMapping("/list/{boardId}")
     public String commentWrite(@PathVariable int boardId,
                                @RequestParam String content,
-                               RedirectAttributes redirectAttributes){
+                               RedirectAttributes redirectAttributes,
+                               @Login User loginUser){
         int commentNextId = boardService.commentNextId(boardId)+1;
-        Comment comment = new Comment("test2", content, boardId, commentNextId);
+        Comment comment = new Comment(loginUser.getUserId(), content, boardId, commentNextId);
         boardService.commentSave(comment);
         redirectAttributes.addAttribute("boardId", boardId);
         return "redirect:/board/list/{boardId}";
@@ -79,12 +89,11 @@ public class BoardController {
     }
 
     @PostMapping("/write")
-    public String Boardwrite(@RequestParam String title,
-                             @RequestParam String content,
-                             @Validated @ModelAttribute("board") SaveBoardForm form,
+    public String Boardwrite(@Validated @ModelAttribute("board") SaveBoardForm form,
                              BindingResult bindingResult,
                              Model model,
-                             RedirectAttributes redirectAttributes){
+                             RedirectAttributes redirectAttributes,
+                             @Login User loginUser){
         if (bindingResult.hasErrors()) {
 //            log.info(bindingResult.toString());
             return "writeForm";
@@ -94,7 +103,7 @@ public class BoardController {
         board.setContent(form.getContent());
         int nextId = boardService.boardNextId()+1;
         board.setId(nextId);
-        board.setWriteId("hsp0404");
+        board.setWriteId(loginUser.getUserId());
         board.setHit(0);
         boardService.boardSave(board);
         model.addAttribute("board", board);

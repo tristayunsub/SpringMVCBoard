@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link href="../css/bootstrap.min.css"
+        th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <style>
+    .btn-primary{
+      background-color: #5b9bbf;
+      border-color: #3a7593;
+    }
+    .btn-primary:hover{
+      background-color: #3d81a0;
+      border-color: #3a7593;
+    }
+    .gender{
+      background-color: gray;
+      padding: .1rem .75rem;
+    }
+    .container {
+      max-width: 1100px;
+      min-width: 800px;
+    }
+    .field-error {
+      border-color: #dc3545;
+      color: #dc3545;
+      animation: blink 0.7s;
+      animation-iteration-count: 2;
+      animation-delay: 0.2s;
+    }
+    @keyframes blink {40% { border-color: white; color:white }  }
+  </style>
+</head>
+<body>
+<div class="container-sm" style="width: 450px">
+  <div class="py-5 text-center">
+    <h2>회원가입</h2>
+  </div>
+  <form action="item.html" th:object="${user}" th:action method="post" id="signupForm" class="form-horizontal">
+    <div th:if="${#fields.hasGlobalErrors()}">
+      <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+         th:text="${err}">전체 오류 메시지</p>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4">로그인 ID*</label>
+      <div class="col-8">
+        <input type="text" th:field="*{userId}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <div class="field-error" th:errors="*{userId}">
+          아이디
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4"  >비밀번호*</label>
+      <div class="col-8">
+        <input type="password" th:field="*{password}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <div class="field-error" th:errors="*{password}">
+          아이디
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4"  >비밀번호 확인*</label>
+      <div class="col-8">
+        <input type="password" id="password2" name="password2" class="form-control form-control-sm col-8" maxlength=40/>
+        <span style="float: right;font-size: 14px;color: red" id="notEqual"></span>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4"  >이름*</label>
+      <div class="col-8">
+        <input type="text" th:field="*{userName}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <div class="field-error" th:errors="*{userName}">
+          아이디
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4">성별*</label>
+      <div class="col-8">
+        <input type="radio" class="btn-check" name="gender" id="man" autocomplete="off" value="1" checked>
+        <label class="btn btn-primary gender" for="man">남자</label>
+        <input type="radio" class="btn-check" name="gender" id="woman" value="2" autocomplete="off">
+        <label class="btn btn-primary gender" for="woman">여자</label>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4">생년월일</label>
+      <div class="col-8">
+        <input type="date" th:field="*{birth}" class="form-control form-control-sm col-8" maxlength=40/ >
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4"  >이메일</label>
+      <div class="col-8">
+        <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" th:field="*{email}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-form-label col-4"  >휴대폰 번호</label>
+      <div class="col-8">
+        <input type="tel" pattern="[0-9]{3}-?[0-9]{4}-?[0-9]{4}|[0-9]{3}-?[0-9]{3}-?[0-9]{4}" th:field="*{phone}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=13/ >
+      </div>
+    </div>
+    <span style="font-size: 10px;float: right">*는 필수사항입니다.</span>
+    <hr class="my-4">
+    <div class="row">
+      <div class="col">
+        <button class="w-100 btn btn-primary btn-lg" id="singupSubmit" type="button" onclick="test()" >회원가입</button>
+      </div>
+      <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg"
+                onclick="location.href='items.html'"
+                th:onclick="|location.href='@{/login}'|" type="button">취소</button>
+      </div>
+    </div>
+  </form>
+</div> <!-- /container -->
+</body>
+<script type="text/javascript">
+  function test(){
+    var p1 = document.getElementById('password').value;
+    var p2 = document.getElementById('password2').value;
+    if(p1 != p2){
+      document.getElementById('password').classList.add('field-error');
+      document.getElementById('password2').classList.add('field-error');
+      document.getElementById('notEqual').innerText='비밀번호가 다릅니다';
+    } else{
+      document.getElementById('password').className = 'form-control form-control-sm col-8';
+      document.getElementById('password2').className = 'form-control form-control-sm col-8';
+      document.getElementById('notEqual').innerText='';
+      document.getElementById('signupForm').submit();
+    }
+  }
+</script>
+</html>

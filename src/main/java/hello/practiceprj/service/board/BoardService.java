@@ -1,7 +1,8 @@
-package hello.practiceprj.service;
+package hello.practiceprj.service.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
