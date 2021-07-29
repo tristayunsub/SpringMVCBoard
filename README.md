@@ -1,8 +1,8 @@
 SpringMVC Board Project
 ## 목차
-1. [**개발 목적**](https://github.com/hsp0404/SpringMVCBoard/tree/master#%EA%B0%9C%EB%B0%9C%EB%AA%A9%EC%A0%81)
+1. [**개발 목적**](#개발-목적)
 
-2. [**개발 환경**](https://github.com/hsp0404/SpringMVCBoard/new/master?readme=1#%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD)
+2. [**개발 환경**](#개발-환경)
 
 3. **개발 일정**
 
@@ -30,4 +30,4 @@ SpringMVC Board Project
 * IntellJ 2021-01
 
 
-[목차](https://github.com/hsp0404/SpringMVCBoard/new/master?readme=1#%EB%AA%A9%EC%B0%A8)
+[목차](#목차)
