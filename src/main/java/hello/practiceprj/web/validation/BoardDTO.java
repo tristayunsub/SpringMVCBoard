@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class SaveBoardForm {
+public class BoardDTO {
     @NotBlank
     private String title;
     @NotBlank

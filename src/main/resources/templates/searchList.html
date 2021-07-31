@@ -57,7 +57,9 @@
                 class="btn btn-primary" style="font-size: 14px">로그아웃</button>
       </span>
   </div>
-  <h2  class="py-5 text-center">게시판</h2>
+  <div class="py-5 text-center">
+    <h2><a style="text-decoration: none" th:href="@{/board/list}">게시판</a></h2>
+  </div>
   <hr class="my-4">
   <div id="boardTable">
     <div>
@@ -109,22 +111,22 @@
         <a class="page-link" href="#" tabindex="-1">Previous</a>
       </li>
       <li th:unless="${query==1}" class="page-item">
-        <a class="page-link" th:href="@{/board/list(p=${query}-1)}" href="#" tabindex="-1">Previous</a>
+        <a class="page-link" th:href="|${curURI}&p=${query}-1|" href="#" tabindex="-1">Previous</a>
       </li>
       <!--    <li class="page-item active"><a  class="page-link" th:text="${param.p}" href="/board/list?p=1">1</a></li>-->
       <th:block th:each="num: ${#numbers.sequence(1,lastNum)}">
         <li th:if="${num==query}" class="page-item active">
-          <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+          <a th:text="${num}" th:href="|${curURI}&p=${num}|" class="page-link" href="#"></a>
         </li>
         <li th:unless="${num==query}" class="page-item">
-          <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+          <a th:text="${num}" th:href="|${curURI}&p=${num}|" class="page-link" href="#"></a>
         </li>
       </th:block>
       <li th:if="${query==lastNum}" class="page-item disabled">
         <a class="page-link" href="#">Next</a>
       </li>
       <li th:unless="${query==lastNum}" class="page-item">
-        <a class="page-link" th:href="@{/board/list(p=${query}+1)}"  href="#">Next</a>
+        <a class="page-link" th:href="|${curURI}&p=${query+1}|" href="#">Next</a>
       </li>
     </ul>
   </nav>
@@ -136,10 +138,26 @@
       search();
     }
   });
+
   function search(){
     var searchText = $("#searchText").val();
     var searchCategory = $("#searchBox option:selected").val();
-    location.href = "/board/search?searchText="+searchText+"&searchCategory="+searchCategory;
+    $.ajax({
+      type:"get",
+      url: "/board/search",
+      dataType: "text",
+      contentType: "application/json; charset=utf-8",
+      data: {"searchText":searchText, "searchCategory": searchCategory},
+      cache: false,
+      success: function(data){
+        $('#bodyContainer').replaceWith(data);
+      },
+      error: function(data){
+        alert(data);
+        alert("에러");
+      }
+    }).done(function (data){
+    });
   }
 </script>
 </body>

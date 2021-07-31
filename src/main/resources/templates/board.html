@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" integrity="sha384-tKLJeE1ALTUwtXlaGjJYM3sejfssWdAaWR2s97axw4xkiAdMzQjtOjgcyw0Y50KU" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <meta charset="utf-8">
   <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
@@ -36,10 +38,24 @@
     .page-link{
       color: #4a96ba;
     }
+    .bi-trash:hover{
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 <div class="container" style="max-width: 1100px; min-width: 800px">
+  <br/>
+  <div th:object="${loginUser}">
+    <button class="btn btn-primary" style="float: right; font-size: 14px" th:if="${loginUser == null}"
+            th:onclick="|location.href='@{/login}'|">로그인</button>
+    <span style="float: right">
+        <span th:if="${loginUser != null}" th:text="|${loginUser.userName}(${loginUser.userId})님|">사용자명</span>
+        <button th:if="${loginUser != null}" th:onclick="|location.href='@{/logout}'|"
+                class="btn btn-primary" style="font-size: 14px">로그아웃</button>
+      </span>
+  </div>
+
   <div class="py-5 text-center">
     <h2><a style="text-decoration: none" th:href="@{/board/list}">게시판</a></h2>
   </div>
@@ -69,34 +85,173 @@
   <br>
   <div>
     <hr class="my-xl-4"/>
-    <table class="table table-striped ">
-      <thead>
-      <tr>
-        <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${commentCnt}개|">#</th>
-        <th style="width: 75%"></th>
-        <th style="width: 15%"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="comment : ${comments}">
-        <td style="text-align: left" th:text="${comment.writerId}">#</td>
-        <td style="text-align: left;padding-left: 5px; font-size: 17px" th:text="${comment.content}"></td>
-        <td style="text-align: left;font-size: 15px" th:text="${comment.writeDate}">글쓴이</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <br/>
-  <form action="index.html" th:action method="post">
-    <textarea id="content" name="content" class="form-control" placeholder="댓글을 입력하세요" style="height: 120px"></textarea>
-    <div class="col">
-      <button class="btn btn-primary float-end" type="submit">등록</button>
+    <div class="col" th:if="${loginUser != null && loginUser.userId == board.writeId}">
+      <button class="btn btn-primary float-xl-start" type="button" th:onclick="|location.href='@{/board/edit/}${board.id}'|">글 수정</button>
+      <span>   </span>
+      <button class="btn btn-primary float-xl-start" type="button" onclick="deleteBoardConfirm()">글 삭제</button>
     </div>
-  </form>
+    <div id="commentDiv">
+      <table th:if="${comments!=null}" class="table table-striped ">
+        <thead>
+        <tr>
+          <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${comments.size()}개|">#</th>
+          <th style="width: 75%"></th>
+          <th style="width: 15%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment : ${comments}">
+          <td style="text-align: left" th:text="${comment.cmtWriteId}">댓글 작성자</td>
+          <td th:if="${loginUser != null && comment.cmtWriteId==loginUser.userId}"
+              style="text-align: left;padding-left: 5px; font-size: 17px"
+              th:id="${comment.commentId}"
+              th:utext="|${comment.content}    ${icon}|"></td>
+          <td th:unless="${loginUser != null && comment.cmtWriteId==loginUser.userId}"
+              style="text-align: left;padding-left: 5px; font-size: 17px" th:text="${comment.content}"></td>
+          <td style="text-align: left;font-size: 15px" th:text="${comment.cmtDate}"></td>
+        </tr>
+        </tbody>
+      </table>
+      <br/>
+      <form action="index.html" th:action method="post">
+        <textarea id="content" name="content" class="form-control" placeholder="댓글을 입력하세요" style="height: 120px; margin-bottom: 5px"></textarea>
+        <div class="col">
+          <button class="btn btn-primary float-end" type="button" onclick="addComment()">등록</button>
+        </div>
+      </form>
+    </div>
   <br/>
   <br/>
-  <div th:replace="~{fragment/listFragment :: copyParam(${boards}, ${startNum}, ${query},${lastNum},${endNum})}">
+  <div>
+    <div>
+      <table class="table">
+        <thead>
+        <tr>
+          <th style="width: 8%">#</th>
+          <th style="width: 69%">제목</th>
+          <th style="width: 13%">글쓴이</th>
+          <th style="width: 10%">조회수</th>
+        </tr>
+        </thead>
+        <tr th:each="n : ${#numbers.sequence((query-1)*15,query*15-1)}" class="contenttr">
+          <div th:if="${n<boards.size()}">
+            <td th:text="${boards[n].id}">#</td>
+            <td style="text-align: left">
+              <a th:href="@{|/board/list/${boards[n].id}|}" th:text="${boards[n].title}">제목</a>
+              <span th:text="|[${boards[n].commentCount}]|">댓글수</span>
+            </td>
+            <td th:text="${boards[n].writeId}">글쓴이</td>
+            <td th:text="${boards[n].hit}">조회수</td>
+          </div>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-primary float-end"
+                th:onclick="|location.href='@{/board/write}'|"
+                onclick="location.href='addForm.html'" type="button">글쓰기</button>
+      </div>
+    </div>
   </div>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li th:if="${query==1}" class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Previous</a>
+      </li>
+      <li th:unless="${query==1}" class="page-item">
+        <a class="page-link" th:href="@{/board/list(p=${query}-1)}" href="#" tabindex="-1">Previous</a>
+      </li>
+      <!--    <li class="page-item active"><a  class="page-link" th:text="${param.p}" href="/board/list?p=1">1</a></li>-->
+      <th:block th:each="num: ${#numbers.sequence(1,lastNum)}">
+        <li th:if="${num==query}" class="page-item active">
+          <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+        </li>
+        <li th:unless="${num==query}" class="page-item">
+          <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+        </li>
+      </th:block>
+      <li th:if="${query==lastNum}" class="page-item disabled">
+        <a class="page-link" href="#">Next</a>
+      </li>
+      <li th:unless="${query==lastNum}" class="page-item">
+        <a class="page-link" th:href="@{/board/list(p=${query}+1)}"  href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
 </div>
 </body>
+<script th:inline="javascript">
+  var boardId = /*[[${board.id}]]*/;
+  function deleteBoardConfirm(){
+    if (confirm("정말 삭제하시겠습니까?") == true) {
+      $.ajax({
+        url: "/board/delete",
+        data: {"boardId":boardId},
+        type: "DELETE",
+        cache:false,
+        success: function (){
+          location.href='/board/list';
+          alert("삭제되었습니다.");
+        }
+      })
+    } else{
+      return false;
+    }
+  }
+  function deleteCommentConfirm(obj){
+    console.log(obj);
+    var commentId = obj.parentNode.id;
+    var comment = {
+      boardId : boardId,
+      commentId : commentId
+    }
+    var jsonData = JSON.stringify(comment);
+    console.log(jsonData);
+    if (confirm("댓글을 삭제하시겠습니까?") == true){
+      $.ajax({
+        url: "/comment/delete/"+boardId,
+        type:"post",
+        dataType: "text",
+        contentType: "application/json; charset-utf-8",
+        data:jsonData,
+        success: function(data){
+          $('#commentDiv').replaceWith(data);
+        },
+        error: function (){
+          location.href='/login?redirectURL=/board/list/'+boardId;
+          alert("로그인해주세요");
+        }
+      });
+      return true;
+    }else{
+      return false;
+    }
+  }
+  function editForm(){
+    location.href='/board/edit/'+boardId;
+  }
+  function addComment(){
+    // for(var i=0; i<)
+    var comment = {
+      content : $("#content").val(),
+    }
+    var jsonData = JSON.stringify(comment);
+    $.ajax({
+      type:"post",
+      url: "/comment/add/"+boardId,
+      dataType:"text",
+      contentType: "application/json; charset-utf-8",
+      data:jsonData,
+      success: function(data){
+        $('#commentDiv').replaceWith(data);
+      },
+      error: function (){
+        location.href='/login?redirectURL=/board/list/'+boardId;
+        alert("로그인해주세요");
+      }
+    });
+  }
+</script>
 </html>

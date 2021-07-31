@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class BoardServiceImpl implements BoardService {
+
     private final BoardMapper boardMapper;
 
     public BoardServiceImpl(BoardMapper boardMapper) {
@@ -16,8 +17,46 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void hit(int id) {
+        boardMapper.hit(id);
+    }
+
+    @Override
+    public void deleteBoard(int id) {
+        boardMapper.deleteBoard(id);
+    }
+
+    @Override
+    public void updateBoard(Board board) {
+        boardMapper.boardUpdate(board);
+    }
+
+    @Override
+    public void deleteComment(Comment comment) {
+        boardMapper.deleteComment(comment);
+    }
+
+    @Override
     public List<Board> getBoardList() {
         List<Board> boards = boardMapper.allBoard();
+        return boards;
+    }
+
+    @Override
+    public List<Board> getSearchTitle(String searchText) {
+        List<Board> boards = boardMapper.searchTitle(searchText);
+        return boards;
+    }
+
+    @Override
+    public List<Board> getSearchContent(String searchText) {
+        List<Board> boards = boardMapper.searchContent(searchText);
+        return boards;
+    }
+
+    @Override
+    public List<Board> getSearchWriter(String searchText) {
+        List<Board> boards = boardMapper.searchWriter(searchText);
         return boards;
     }
 
@@ -32,9 +71,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Integer commentNextId(int boardId){
+    public int commentNextId(int boardId){
         if (boardMapper.commentNextId(boardId)==null){
-            return 0;
+            return 1;
         }else{
             return boardMapper.commentNextId(boardId);
         }

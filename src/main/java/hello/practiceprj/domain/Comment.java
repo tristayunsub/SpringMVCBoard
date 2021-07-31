@@ -1,31 +1,49 @@
 package hello.practiceprj.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Getter @Setter
+@Component
+@Getter @Setter @ToString
 public class Comment {
-    private String WriterId;
-    private String Content;
-    private String writeDate;
+    private String cmtWriteId;
+    private String content;
+    private String cmtDate;
     private int boardId;
     private int commentId;
 
-    public Comment(String writerId, String content, Date writeDate, int boardId, int commentId) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-        WriterId = writerId;
-        Content = content;
-        this.writeDate = dateFormat.format(writeDate);
+    public Comment() {
+    }
+
+    public Comment(String content) {
+        this.content = content;
+    }
+
+    public Comment(int boardId, int commentId) {
         this.boardId = boardId;
         this.commentId = commentId;
     }
 
-    public Comment(String writerId, String content, int boardId, int commentId) {
-        WriterId = writerId;
-        Content = content;
+    public Comment(String content, int commentId) {
+        this.content = content;
+        this.commentId = commentId;
+    }
+
+    public Comment(String cmtWriteId, String content, Date cmtDate, int boardId, int commentId) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+        this.cmtWriteId = cmtWriteId;
+        this.content = content;
+        this.cmtDate = dateFormat.format(cmtDate);
+        this.boardId = boardId;
+        this.commentId = commentId;
+    }
+
+    public Comment(String cmtWriteId, String content, int boardId, int commentId) {
+        this.cmtWriteId = cmtWriteId;
+        this.content = content;
         this.boardId = boardId;
         this.commentId = commentId;
     }

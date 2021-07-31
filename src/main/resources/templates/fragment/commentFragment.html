@@ -1,0 +1,27 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+  <div th:fragment="commentFragment (comments)" id="comment">
+    <table class="table table-striped ">
+      <thead>
+      <tr>
+        <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${comments.size()}개|">#</th>
+        <th style="width: 75%"></th>
+        <th style="width: 15%"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="comment : ${comments}">
+        <td style="text-align: left" th:text="${comment.cmtWriteId}">댓글 작성자</td>
+        <td style="text-align: left;padding-left: 5px; font-size: 17px" th:text="${comment.content}"></td>
+        <td style="text-align: left;font-size: 15px" th:text="${comment.cmtDate}"></td>
+      </tr>
+      </tbody>
+    </table>
+    <br/>
+    <form action="index.html" th:action method="post">
+      <textarea id="content" name="content" class="form-control" placeholder="댓글을 입력하세요" style="height: 120px; margin-bottom: 5px"></textarea>
+      <div class="col">
+        <button class="btn btn-primary float-end" type="button" onclick="addComment()">등록</button>
+      </div>
+    </form>
+  </div>
+</html>

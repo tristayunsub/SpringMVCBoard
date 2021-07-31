@@ -1,63 +1,84 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <body th:fragment="copyParam (boards, startNum, query, lastNum, endNum)">
+<div class="container" style="max-width: 1100px; min-width: 800px" id="bodyContainer">
+  <br/>
+  <div th:object="${loginUser}">
+    <button class="btn btn-primary" style="float: right; font-size: 14px" th:if="${loginUser == null}"
+            th:onclick="|location.href='@{/login}'|">로그인</button>
+    <span style="float: right">
+        <span th:if="${loginUser != null}" th:text="|${loginUser.userName}(${loginUser.userId})님|">사용자명</span>
+        <button th:if="${loginUser != null}" th:onclick="|location.href='@{/logout}'|"
+                class="btn btn-primary" style="font-size: 14px">로그아웃</button>
+      </span>
+  </div>
+  <h2  class="py-5 text-center">게시판</h2>
+  <hr class="my-4">
+  <div id="boardTable">
     <div>
-      <div>
-        <table class="table">
-          <thead>
-          <tr>
-            <th style="width: 8%">#</th>
-            <th style="width: 69%">제목</th>
-            <th style="width: 13%">글쓴이</th>
-            <th style="width: 10%">조회수</th>
-          </tr>
-          </thead>
-          <tbody th:with="startId=${(lastNum)}">
-          <tr th:if="${board.id>=startNum and board.id<= endNum}" th:each="board : ${boards}" class="contenttr">
-            <td th:text="${board.id}">#</td>
+      <table class="table">
+        <thead>
+        <tr>
+          <th style="width: 8%">#</th>
+          <th style="width: 69%">제목</th>
+          <th style="width: 13%">글쓴이</th>
+          <th style="width: 10%">조회수</th>
+        </tr>
+        </thead>
+        <tr th:each="n : ${#numbers.sequence((query-1)*15,query*15-1)}" class="contenttr">
+          <div th:if="${n<boards.size()}">
+            <td th:text="${boards[n].id}">#</td>
             <td style="text-align: left">
-              <a th:href="@{|/board/list/${board.id}|}" th:text="${board.title}">제목</a>
-              <span th:text="|[${board.commentCount}]|">댓글수</span>
+              <a th:href="@{|/board/list/${boards[n].id}|}" th:text="${boards[n].title}">제목</a>
+              <span th:text="|[${boards[n].commentCount}]|">댓글수</span>
             </td>
-            <td th:text="${board.writeId}">글쓴이</td>
-            <td th:text="${board.hit}">조회수</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button class="btn btn-primary float-end"
-                  th:onclick="|location.href='@{/board/write}'|"
-                  onclick="location.href='addForm.html'" type="button">글쓰기</button>
-        </div>
-      </div>
-      </div>
-      <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-          <li th:if="${query==1}" class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1">Previous</a>
-          </li>
-          <li th:unless="${query==1}" class="page-item">
-            <a class="page-link" th:href="@{/board/list(p=${query}-1)}" href="#" tabindex="-1">Previous</a>
-          </li>
-          <!--    <li class="page-item active"><a  class="page-link" th:text="${param.p}" href="/board/list?p=1">1</a></li>-->
-          <th:block th:each="num: ${#numbers.sequence(1,lastNum)}">
-            <li th:if="${num==query}" class="page-item active">
-              <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
-            </li>
-            <li th:unless="${num==query}" class="page-item">
-              <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
-            </li>
-          </th:block>
-          <li th:if="${query==lastNum}" class="page-item disabled">
-            <a class="page-link" href="#">Next</a>
-          </li>
-          <li th:unless="${query==lastNum}" class="page-item">
-            <a class="page-link" th:href="@{/board/list(p=${query}+1)}"  href="#">Next</a>
-          </li>
-        </ul>
-      </nav>
+            <td th:text="${boards[n].writeId}">글쓴이</td>
+            <td th:text="${boards[n].hit}">조회수</td>
+          </div>
+        </tr>
+        </tbody>
+      </table>
     </div>
-  </body>
-</html>
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-primary float-end"
+                th:onclick="|location.href='@{/board/write}'|"
+                onclick="location.href='addForm.html'" type="button">글쓰기</button>
+      </div>
+    </div>
+    <div class="input-group mb-3" style="justify-content:center">
+      <select class="custom-select" id="searchBox">
+        <option selected value="1">제목</option>
+        <option value="2">제목+내용</option>
+        <option value="3">글쓴이</option>
+      </select>
+      <input id="searchText" type="text">
+      <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" type="button" onclick="search()">검색</button>
+      </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li th:if="${query==1}" class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li th:unless="${query==1}" class="page-item">
+          <a class="page-link" th:href="@{/board/list(p=${query}-1)}" href="#" tabindex="-1">Previous</a>
+        </li>
+        <!--    <li class="page-item active"><a  class="page-link" th:text="${param.p}" href="/board/list?p=1">1</a></li>-->
+        <th:block th:each="num: ${#numbers.sequence(1,lastNum)}">
+          <li th:if="${num==query}" class="page-item active">
+            <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+          </li>
+          <li th:unless="${num==query}" class="page-item">
+            <a th:text="${num}" th:href="@{/board/list(p=${num})}" class="page-link" href="#"></a>
+          </li>
+        </th:block>
+        <li th:if="${query==lastNum}" class="page-item disabled">
+          <a class="page-link" href="#">Next</a>
+        </li>
+        <li th:unless="${query==lastNum}" class="page-item">
+          <a class="page-link" th:href="@{/board/list(p=${query}+1)}"  href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-package hello.practiceprj.web.board;
+package hello.practiceprj.web.login;
 
 import hello.practiceprj.domain.User;
 import hello.practiceprj.service.user.UserServiceImpl;

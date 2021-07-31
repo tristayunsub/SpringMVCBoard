@@ -12,7 +12,7 @@ public class LoginService {
 
     public User login(String loginId, String password){
         User user = userService.getUser(loginId);
-        if(user == null || user.getPassword() == password){
+        if(user == null || !user.getPassword().equals(password)){
             return null;
         }
         return user;
