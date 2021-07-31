@@ -31,3 +31,12 @@ SpringMVC Board Project
 
 
 [목차](#목차)
+---
+## 기능
+
+1. 기본적인 게시판 구조 (CRUD)
+
+2. Empty/Blank 검증
+![Animation](https://user-images.githubusercontent.com/73703641/127738053-ee971588-47fe-4824-87da-2426c1d7e5d0.gif)
+
+
