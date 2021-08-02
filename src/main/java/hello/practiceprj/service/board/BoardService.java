@@ -2,12 +2,9 @@ package hello.practiceprj.service.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
-import hello.practiceprj.web.validation.BoardDTO;
-import org.springframework.stereotype.Service;
+import hello.practiceprj.domain.UploadFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public interface BoardService {
     List<Board> getBoardList();
@@ -37,4 +34,8 @@ public interface BoardService {
     void updateBoard(Board board);
 
     void deleteComment(Comment comment);
+
+    void uploadFile(UploadFile uploadFile);
+
+    List<UploadFile> getFiles(int boardId);
 }

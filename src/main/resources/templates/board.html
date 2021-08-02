@@ -31,7 +31,7 @@
   </style>
 </head>
 <body>
-<div class="container" style="max-width: 1100px; min-width: 800px">
+<div class="container" style="max-width: 1100px; min-width: 600px">
   <br/>
   <div th:object="${loginUser}">
     <button class="btn btn-primary" style="float: right; font-size: 14px" th:if="${loginUser == null}"
@@ -63,6 +63,12 @@
   <br>
   <hr class="my-4">
   <br>
+<!--  <img th:each="imageFile : ${board.getImageFiles()}" th:src="|${imageFile.getStoreFileName()}|">-->
+  <div th:each="file : ${files}">
+    <img th:src="|/board/images/${file.getStoreFileName()}|" class="img-fluid" id="boardImage">
+    <br/>
+    <br/>
+  </div>
   <p th:text="${board.content}"></p>
   <br>
   <br>

@@ -23,7 +23,9 @@ public class Board {
     private String content;
     private int hit;
     private int commentCount;
-    private List<UploadFile> imageFiles;
+//    private List<UploadFile> imageFiles;
+//    private String storeFilename;
+//    private String uploadFilename;
 
     public Board() {
     }
@@ -43,7 +45,8 @@ public class Board {
         this.hit = hit;
     }
 
-    public Board(int id, String title, String writeId, String writeDate, String content, int hit, int commentCount) {
+    public Board(int id, String title, String writeId, String writeDate, String content,
+                 int hit, int commentCount) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
         this.id = id;
         this.title = title;
@@ -52,5 +55,7 @@ public class Board {
         this.content = content;
         this.hit = hit;
         this.commentCount = commentCount;
+//        this.storeFilename = storeFilename;
+//        this.uploadFilename = uploadFilename;
     }
 }

@@ -2,6 +2,7 @@ package hello.practiceprj.web.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
+import hello.practiceprj.domain.UploadFile;
 import hello.practiceprj.domain.User;
 import hello.practiceprj.file.FileStore;
 import hello.practiceprj.service.board.BoardServiceImpl;
@@ -10,6 +11,8 @@ import hello.practiceprj.web.argumentResolver.Login;
 import hello.practiceprj.web.validation.BoardDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +70,7 @@ public class BoardController {
         int endNum = boards.size()-(queryNum-1)*15;
         List<Comment> comments = boardService.getCommentList(boardId);
         String icon = "<a onclick=\"deleteCommentConfirm(this)\" class=\"bi bi-trash\"></a>";
+        List<UploadFile> uploadFiles = boardService.getFiles(boardId);
         model.addAttribute("board", board);
         model.addAttribute("boards", boards);
         model.addAttribute("comments", comments);
@@ -76,6 +81,9 @@ public class BoardController {
         model.addAttribute("comment", comment);
         if(loginUser != null){
             model.addAttribute("loginUser", loginUser);
+        }
+        if(uploadFiles != null){
+            model.addAttribute("files", uploadFiles);
         }
         if (request.getCookies() != null) {
             Cookie[] cookies = request.getCookies();
@@ -133,8 +141,8 @@ public class BoardController {
                              BindingResult bindingResult,
                              Model model,
                              RedirectAttributes redirectAttributes,
-                             @Login User loginUser){
-//        @RequestParam MultipartFile file
+                             @Login User loginUser) throws IOException {
+
         if (bindingResult.hasErrors()) {
             return "writeForm";
         }
@@ -145,11 +153,27 @@ public class BoardController {
         board.setId(nextId);
         board.setWriteId(loginUser.getUserId());
         board.setHit(0);
+        System.out.println(board);
         boardService.boardSave(board);
+        uploadFileDB(form, nextId);
         model.addAttribute("board", board);
         redirectAttributes.addAttribute("nextId", nextId);
         return "redirect:/board/list/{nextId}";
     }
+
+    private void uploadFileDB(BoardDTO form, int nextId) throws IOException {
+        if(!form.getImageFiles().isEmpty()){
+            List<UploadFile> storeImageFiles = fileStore.storeFiles(form.getImageFiles());
+            int index = 1;
+            for (UploadFile storeImageFile : storeImageFiles) {
+                storeImageFile.setBoardId(nextId);
+                storeImageFile.setFileNum(index);
+                boardService.uploadFile(storeImageFile);
+                index++;
+            }
+        }
+    }
+
     @DeleteMapping("/delete")
     public String test(int boardId) {
         boardService.deleteBoard(boardId);
@@ -213,5 +237,10 @@ public class BoardController {
             model.addAttribute("loginUser", loginUser);
         }
         return "searchList";
+    }
+    @ResponseBody
+    @GetMapping("/images/{filename}")
+    public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
+        return new UrlResource("file:" + fileStore.getFullPath(filename));
     }
 }

@@ -38,7 +38,8 @@ public class FileStore {
         //서버에 저장하는 파일명
         String storeFilename = createStoreFilename(originalFilename);
         multipartFile.transferTo(new File(getFullPath(storeFilename)));
-        return new UploadFile(originalFilename, storeFilename);
+        long fileSize = multipartFile.getSize();
+        return new UploadFile(originalFilename, storeFilename, fileSize);
 
     }
 

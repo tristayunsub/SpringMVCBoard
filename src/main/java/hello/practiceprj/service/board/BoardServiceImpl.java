@@ -2,7 +2,9 @@ package hello.practiceprj.service.board;
 
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
+import hello.practiceprj.domain.UploadFile;
 import hello.practiceprj.mapper.BoardMapper;
+import hello.practiceprj.mapper.FileMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
+    private final FileMapper fileMapper;
 
-    public BoardServiceImpl(BoardMapper boardMapper) {
+    public BoardServiceImpl(BoardMapper boardMapper, FileMapper fileMapper) {
         this.boardMapper = boardMapper;
+        this.fileMapper = fileMapper;
     }
 
     @Override
@@ -34,6 +38,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteComment(Comment comment) {
         boardMapper.deleteComment(comment);
+    }
+
+    @Override
+    public void uploadFile(UploadFile uploadFile) {
+        fileMapper.uploadFile(uploadFile);
+    }
+
+    @Override
+    public List<UploadFile> getFiles(int boardId) {
+        return fileMapper.getFiles(boardId);
     }
 
     @Override
