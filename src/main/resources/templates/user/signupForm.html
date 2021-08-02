@@ -4,15 +4,8 @@
   <meta charset="utf-8">
   <link href="../css/bootstrap.min.css"
         th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link href="" th:href="@{/css/custom.css}" rel="stylesheet"/>
   <style>
-    .btn-primary{
-      background-color: #5b9bbf;
-      border-color: #3a7593;
-    }
-    .btn-primary:hover{
-      background-color: #3d81a0;
-      border-color: #3a7593;
-    }
     .gender{
       background-color: gray;
       padding: .1rem .75rem;
@@ -21,14 +14,6 @@
       max-width: 1100px;
       min-width: 800px;
     }
-    .field-error {
-      border-color: #dc3545;
-      color: #dc3545;
-      animation: blink 0.7s;
-      animation-iteration-count: 2;
-      animation-delay: 0.2s;
-    }
-    @keyframes blink {40% { border-color: white; color:white }  }
   </style>
 </head>
 <body>
@@ -126,8 +111,8 @@
       document.getElementById('password2').classList.add('field-error');
       document.getElementById('notEqual').innerText='비밀번호가 다릅니다';
     } else{
-      document.getElementById('password').className = 'form-control form-control-sm col-8';
-      document.getElementById('password2').className = 'form-control form-control-sm col-8';
+      document.getElementById('password').classList.remove('field-error');
+      document.getElementById('password2').classList.remove('field-error');
       document.getElementById('notEqual').innerText='';
       document.getElementById('signupForm').submit();
     }

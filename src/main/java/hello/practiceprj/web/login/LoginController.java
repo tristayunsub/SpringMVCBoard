@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,8 +65,14 @@ public class LoginController {
 
     @PostMapping("/signup")
     public String signup(@Validated @ModelAttribute User user,
-                         BindingResult bindingResult, HttpServletRequest request,
-                         @RequestParam(defaultValue = "/") String redirectURL ) throws ParseException {
+                         BindingResult bindingResult, HttpServletRequest request) {
+        List<User> userList = userService.getUserList();
+        for (User users : userList) {
+            if (user.getUserId().equals(users.getUserId())) {
+                bindingResult.rejectValue("userId","existed");
+                return "user/signupForm";
+            }
+        }
         if (bindingResult.hasErrors()) {
             return "user/signupForm";
         }

@@ -26,6 +26,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
 	implementation group: 'com.oracle.database.jdbc', name: 'ojdbc8', version: '19.7.0.0'
 	implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.32'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 test {

@@ -1,0 +1,24 @@
+.btn-primary{
+    background-color: #5b9bbf;
+    border-color: #3a7593;
+}
+.btn-primary:hover{
+    background-color: #3d81a0;
+    border-color: #3a7593;
+}
+.field-error {
+    border-color: #dc3545;
+    color: #dc3545;
+    animation: blink 0.7s;
+    animation-iteration-count: 2;
+    animation-delay: 0.2s;
+}
+@keyframes blink {40% { border-color: white; color:white }  }
+
+.page-item.active .page-link {
+    background-color: #3d81a0;
+    border-color: #35708b;
+}
+.page-link{
+    color: #4a96ba;
+}

@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Component
 @Getter @Setter @ToString
@@ -22,6 +23,7 @@ public class Board {
     private String content;
     private int hit;
     private int commentCount;
+    private List<UploadFile> imageFiles;
 
     public Board() {
     }

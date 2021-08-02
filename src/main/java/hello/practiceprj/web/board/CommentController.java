@@ -7,6 +7,8 @@ import hello.practiceprj.web.argumentResolver.Login;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +24,15 @@ public class CommentController {
     private final BoardServiceImpl boardService;
 
     @GetMapping("/list/{boardId}")
-    public String commentList(Model model, @PathVariable int boardId){
+    public String commentList(@PathVariable int boardId){
         List<Comment> commentList = boardService.getCommentList(boardId);
         return "board";
     }
 
     @PostMapping("/add/{boardId}")
-    public String commentAdd(@RequestBody Comment comment, @PathVariable int boardId,
-                             @Login User loginUser, Model model, HttpServletResponse response, HttpServletRequest request) throws IOException {
+    public String commentAdd(@Validated @RequestBody Comment comment, BindingResult bindingResult,
+                             @PathVariable int boardId, @Login User loginUser, Model model,
+                             HttpServletResponse response) throws IOException {
         if(loginUser==null){
             response.sendError(500);
             return null;
@@ -38,12 +41,18 @@ public class CommentController {
         comment.setBoardId(boardId);
         comment.setCmtWriteId(loginUser.getUserId());
         comment.setCommentId(commentNextId);
-        boardService.commentSave(comment);
+        if(!bindingResult.hasErrors()){
+            boardService.commentSave(comment);
+        }
         List<Comment> commentList = boardService.getCommentList(boardId);
         String icon = "<a th:href onclick=\"deleteCommentConfirm(this)\" class=\"bi bi-trash\"></a>";
         model.addAttribute("comments", commentList);
         model.addAttribute("icon", icon);
         model.addAttribute("loginUser", loginUser);
+        model.addAttribute("comment", comment);
+        if(bindingResult.hasErrors()){
+            return "board :: #commentDiv";
+        }
         return "board :: #commentDiv";
     }
 

@@ -3,6 +3,7 @@ package hello.practiceprj.web.board;
 import hello.practiceprj.domain.Board;
 import hello.practiceprj.domain.Comment;
 import hello.practiceprj.domain.User;
+import hello.practiceprj.file.FileStore;
 import hello.practiceprj.service.board.BoardServiceImpl;
 import hello.practiceprj.service.user.UserServiceImpl;
 import hello.practiceprj.web.argumentResolver.Login;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
@@ -31,7 +33,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardServiceImpl boardService;
-    private final UserServiceImpl userService;
+    private final FileStore fileStore;
 
     @RequestMapping("/list")
     public String list(Model model,
@@ -52,6 +54,7 @@ public class BoardController {
 
     @GetMapping("/list/{boardId}")
     public String board(@PathVariable int boardId,
+                        @ModelAttribute Comment comment,
                         Model model, HttpServletResponse response,
                         HttpServletRequest request,
                         @Login User loginUser) {
@@ -69,8 +72,8 @@ public class BoardController {
         model.addAttribute("lastNum", lastNum);
         model.addAttribute("query", queryNum);
         model.addAttribute("startNum", startNum);
-        model.addAttribute("endNum", endNum);
         model.addAttribute("icon", icon);
+        model.addAttribute("comment", comment);
         if(loginUser != null){
             model.addAttribute("loginUser", loginUser);
         }
@@ -120,7 +123,7 @@ public class BoardController {
 
     @GetMapping("/write")
     public String boardWriteForm(Model model){
-        Board board = new Board();
+        BoardDTO board = new BoardDTO();
         model.addAttribute("board",board);
         return "writeForm";
     }
@@ -131,8 +134,8 @@ public class BoardController {
                              Model model,
                              RedirectAttributes redirectAttributes,
                              @Login User loginUser){
+//        @RequestParam MultipartFile file
         if (bindingResult.hasErrors()) {
-//            log.info(bindingResult.toString());
             return "writeForm";
         }
         Board board = new Board();

@@ -3,6 +3,7 @@ package hello.practiceprj.domain;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotBlank;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 @Getter @Setter @ToString
 public class Comment {
     private String cmtWriteId;
+    @NotBlank
     private String content;
     private String cmtDate;
     private int boardId;
