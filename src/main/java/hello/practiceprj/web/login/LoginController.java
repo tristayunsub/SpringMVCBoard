@@ -7,6 +7,7 @@ import hello.practiceprj.service.user.login.LoginService;
 import hello.practiceprj.web.session.SessionConst;
 import lombok.RequiredArgsConstructor;
 import oracle.jdbc.proxy.annotation.Post;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,6 +40,10 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             return "user/loginForm";
         }
+
+        userService.loadUserByUsername(form.getUserId()).getPassword();
+
+
         User loginUser = loginService.login(form.getUserId(), form.getPassword());
         if (loginUser == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
@@ -46,7 +51,6 @@ public class LoginController {
         }
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginUser);
-        System.out.println(redirectURL);
         return "redirect:" + redirectURL;
     }
 

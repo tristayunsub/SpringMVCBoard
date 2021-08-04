@@ -1,8 +1,6 @@
 package hello.practiceprj.service.board;
 
-import hello.practiceprj.domain.Board;
-import hello.practiceprj.domain.Comment;
-import hello.practiceprj.domain.UploadFile;
+import hello.practiceprj.domain.*;
 
 import java.util.List;
 
@@ -38,4 +36,14 @@ public interface BoardService {
     void uploadFile(UploadFile uploadFile);
 
     List<UploadFile> getFiles(int boardId);
+
+    List<Reply> getReplies(int boardId);
+
+    void saveReply(Reply reply);
+
+    void deleteReply(int rplId);
+
+    List<Recommend> getRecommendList(int boardId);
+
+    void addRecommend(Recommend recommend);
 }

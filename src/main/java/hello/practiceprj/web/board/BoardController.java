@@ -1,14 +1,10 @@
 package hello.practiceprj.web.board;
 
-import hello.practiceprj.domain.Board;
-import hello.practiceprj.domain.Comment;
-import hello.practiceprj.domain.UploadFile;
-import hello.practiceprj.domain.User;
+import hello.practiceprj.domain.*;
 import hello.practiceprj.file.FileStore;
 import hello.practiceprj.service.board.BoardServiceImpl;
-import hello.practiceprj.service.user.UserServiceImpl;
 import hello.practiceprj.web.argumentResolver.Login;
-import hello.practiceprj.web.validation.BoardDTO;
+import hello.practiceprj.web.vo.BoardDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -18,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
@@ -59,26 +54,20 @@ public class BoardController {
     @GetMapping("/list/{boardId}")
     public String board(@PathVariable int boardId,
                         @ModelAttribute Comment comment,
+                        @ModelAttribute Reply reply,
                         Model model, HttpServletResponse response,
                         HttpServletRequest request,
                         @Login User loginUser) {
         Board board = boardService.getBoard(boardId);
         List<Board> boards = boardService.getBoardList();
-        int queryNum = ((boards.size()-boardId)/15)+1;
-        int lastNum = (boards.size()/15)+1;
-        int startNum = (boards.size()-(queryNum-1)*15)-14;
-        int endNum = boards.size()-(queryNum-1)*15;
+        List<Reply> replies = boardService.getReplies(boardId);
         List<Comment> comments = boardService.getCommentList(boardId);
-        String icon = "<a onclick=\"deleteCommentConfirm(this)\" class=\"bi bi-trash\"></a>";
         List<UploadFile> uploadFiles = boardService.getFiles(boardId);
-        model.addAttribute("board", board);
-        model.addAttribute("boards", boards);
-        model.addAttribute("comments", comments);
-        model.addAttribute("lastNum", lastNum);
-        model.addAttribute("query", queryNum);
-        model.addAttribute("startNum", startNum);
-        model.addAttribute("icon", icon);
-        model.addAttribute("comment", comment);
+        List<Recommend> recommendList = boardService.getRecommendList(boardId);
+        boardListModel(boardId, comment, reply, model, board, boards, replies, comments);
+        model.addAttribute("recommends", recommendList);
+//        if(recommendList != null){
+//        }
         if(loginUser != null){
             model.addAttribute("loginUser", loginUser);
         }
@@ -110,23 +99,25 @@ public class BoardController {
         return "redirect:/board/list/"+boardId;
     }
 
-
-
-//    @PostMapping("/list/{boardId}")
-//    public String commentWrite(@PathVariable int boardId,
-//                               @RequestParam String content,
-//                               RedirectAttributes redirectAttributes,
-//                               @Login User loginUser){
-//        if(loginUser == null){
-//            return "redirect:/login?redirectURL=/board/list/"+boardId;
-//        }
-//        int commentNextId = boardService.commentNextId(boardId)+1;
-//        Comment comment = new Comment(loginUser.getUserId(), content, boardId, commentNextId);
-//        boardService.commentSave(comment);
-//        redirectAttributes.addAttribute("boardId", boardId);
-//        return "redirect:/board/list/{boardId}";
-//    }
-
+    private void boardListModel(int boardId, Comment comment, Reply reply, Model model, Board board, List<Board> boards, List<Reply> replies, List<Comment> comments) {
+        String commentDeleteIcon = "<a onclick=\"deleteComment(this)\" class=\"bi bi-trash\"></a>";
+        String replyDeleteIcon = "<a onclick=\"deleteReply(this)\" class=\"bi bi-trash\"></a>";
+        int queryNum = ((boards.size()- boardId)/15)+1;
+        int lastNum = (boards.size()/15)+1;
+        int startNum = (boards.size()-(queryNum-1)*15)-14;
+        int endNum = boards.size()-(queryNum-1)*15;
+        model.addAttribute("board", board);
+        model.addAttribute("boards", boards);
+        model.addAttribute("comments", comments);
+        model.addAttribute("lastNum", lastNum);
+        model.addAttribute("query", queryNum);
+        model.addAttribute("startNum", startNum);
+        model.addAttribute("commentDeleteIcon", commentDeleteIcon);
+        model.addAttribute("replyDeleteIcon", replyDeleteIcon);
+        model.addAttribute("comment", comment);
+        model.addAttribute("reply", reply);
+        model.addAttribute("replies", replies);
+    }
 
 
     @GetMapping("/write")
@@ -153,7 +144,6 @@ public class BoardController {
         board.setId(nextId);
         board.setWriteId(loginUser.getUserId());
         board.setHit(0);
-        System.out.println(board);
         boardService.boardSave(board);
         uploadFileDB(form, nextId);
         model.addAttribute("board", board);
@@ -238,6 +228,28 @@ public class BoardController {
         }
         return "searchList";
     }
+
+    @PostMapping("/recommend")
+    public String addRecommend(@RequestBody Recommend recommend, @Login User loginUser, Model model){
+        if (loginUser != null) {
+            model.addAttribute("loginUser", loginUser);
+        }
+        List<Recommend> recommendList = boardService.getRecommendList(recommend.getBoardId());
+        model.addAttribute("recommends", recommendList);
+        if (recommendList != null){
+            for (Recommend r : recommendList) {
+                if(r.getLikeId().equals(loginUser)){
+                    return "board :: #recommendDiv";
+                }
+            }
+        }
+        boardService.addRecommend(recommend);
+        recommendList = boardService.getRecommendList(recommend.getBoardId());
+        model.addAttribute("recommends", recommendList);
+        return "board :: #recommendDiv";
+    }
+
+
     @ResponseBody
     @GetMapping("/images/{filename}")
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {

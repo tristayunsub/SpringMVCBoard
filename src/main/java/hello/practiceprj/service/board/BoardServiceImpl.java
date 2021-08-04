@@ -1,9 +1,8 @@
 package hello.practiceprj.service.board;
 
-import hello.practiceprj.domain.Board;
-import hello.practiceprj.domain.Comment;
-import hello.practiceprj.domain.UploadFile;
+import hello.practiceprj.domain.*;
 import hello.practiceprj.mapper.BoardMapper;
+import hello.practiceprj.mapper.CommentMapper;
 import hello.practiceprj.mapper.FileMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +13,12 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
     private final FileMapper fileMapper;
+    private final CommentMapper commentMapper;
 
-    public BoardServiceImpl(BoardMapper boardMapper, FileMapper fileMapper) {
+    public BoardServiceImpl(BoardMapper boardMapper, FileMapper fileMapper, CommentMapper commentMapper) {
         this.boardMapper = boardMapper;
         this.fileMapper = fileMapper;
+        this.commentMapper = commentMapper;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void deleteComment(Comment comment) {
-        boardMapper.deleteComment(comment);
+        commentMapper.deleteComment(comment);
     }
 
     @Override
@@ -86,10 +87,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public int commentNextId(int boardId){
-        if (boardMapper.commentNextId(boardId)==null){
+        if (commentMapper.commentNextId(boardId)==null){
             return 1;
         }else{
-            return boardMapper.commentNextId(boardId);
+            return commentMapper.commentNextId(boardId);
         }
     }
 
@@ -100,12 +101,37 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<Comment> getCommentList(int id) {
-        return boardMapper.boardComment(id);
+        return commentMapper.boardComment(id);
     }
 
     @Override
     public void commentSave(Comment comment) {
-        boardMapper.commentWrite(comment);
+        commentMapper.commentWrite(comment);
     }
 
+    @Override
+    public List<Reply> getReplies(int boardId) {
+        List<Reply> replies = commentMapper.replies(boardId);
+        return replies;
+    }
+
+    @Override
+    public void saveReply(Reply reply) {
+        commentMapper.replyWrite(reply);
+    }
+
+    @Override
+    public void deleteReply(int rplId) {
+        commentMapper.replyDelete(rplId);
+    }
+
+    @Override
+    public List<Recommend> getRecommendList(int boardId) {
+        return boardMapper.getRecommendList(boardId);
+    }
+
+    @Override
+    public void addRecommend(Recommend recommend) {
+        boardMapper.addRecommend(recommend);
+    }
 }

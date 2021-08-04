@@ -28,6 +28,46 @@
     .bi-trash:hover{
       cursor: pointer;
     }
+    .hidden {
+      display: none;
+      line-height: 40px;
+      opacity: 0;
+    }
+
+    .appear {
+      animation: fade-in 1s;
+      animation-fill-mode: forwards;
+      display: table-row;
+    }
+
+    .disappear {
+      animation: fade-out 1s;
+      animation-fill-mode: forwards;
+      display: none;
+    }
+
+    @keyframes fade-in {
+      from {
+        line-height: 40px;
+        opacity: 0.5;
+      }
+      to {
+        line-height:50px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fade-out {
+      from {
+        line-height: 50px;
+        opacity: 1;
+
+      }
+      to {
+        line-height: 40px;
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -72,6 +112,13 @@
   <p th:text="${board.content}"></p>
   <br>
   <br>
+  <div id="recommendDiv">
+    <div id="like" class="input-group mb-3" style="max-width: 250px;margin-left: auto; margin-right: auto">
+      <span th:if="${loginUser != null}" class="btn-secondary input-group-text bi bi-hand-thumbs-up" th:id="likeButton" onclick="addRecommend(this)"></span>
+      <span th:unless="${loginUser != null}" class="btn-secondary input-group-text bi bi-hand-thumbs-up" th:id="likeButton" onclick="alert('추천은 로그인한 회원만 가능합니다.')"></span>
+      <label th:for="likeButton" class="form-control" style="text-align: center" th:text="${recommends.size()}">추천수</label>
+    </div>
+  </div>
   <br>
   <br>
   <br>
@@ -84,26 +131,57 @@
       <button class="btn btn-primary float-xl-start" type="button" onclick="deleteBoardConfirm()">글 삭제</button>
     </div>
     <div id="commentDiv">
-      <table th:if="${comments!=null}" class="table table-striped ">
+      <table th:if="${comments!=null}" th:with="ddd=1" class="table table-striped ">
         <thead>
         <tr>
-          <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${comments.size()}개|">#</th>
+          <th style="width: 10%;font-size: 14px;font-weight: bold" th:text="|전체댓글 ${comments.size()+replies.size()}개|">#</th>
           <th style="width: 70%"></th>
           <th style="width: 5%"></th>
           <th style="width: 15%"></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="comment : ${comments}">
-          <td style="text-align: left" th:text="${comment.cmtWriteId}">댓글 작성자</td>
-          <td style="text-align: left;padding-left: 5px; font-size: 17px"
-              th:text="${comment.content}"></td>
-          <td th:if="${loginUser != null && comment.cmtWriteId==loginUser.userId}"
-              th:id="${comment.commentId}"
-              th:utext="|${icon}|"></td>
-          <td th:unless="${loginUser != null && comment.cmtWriteId==loginUser.userId}"> </td>
-          <td style="text-align: left;font-size: 15px" th:text="${comment.cmtDate}"></td>
-        </tr>
+        <div th:each="comment : ${comments}">
+          <tr>
+            <td style="text-align: left" th:text="${comment.cmtWriteId}">댓글 작성자</td>
+            <td style="text-align: left;padding-left: 5px; font-size: 17px; cursor: pointer"
+                th:text="${comment.content}" th:onclick="|replyForm(${comment.commentId})|">
+            </td>
+            <td th:if="${loginUser != null && comment.cmtWriteId==loginUser.userId}"
+                th:id="${comment.commentId}"
+                th:utext="|${commentDeleteIcon}|">
+            </td>
+            <td th:unless="${loginUser != null && comment.cmtWriteId==loginUser.userId}"> </td>
+            <td style="text-align: left;font-size: 14px" th:text="${comment.cmtDate}"></td>
+          </tr>
+          <tr style="--bs-table-striped-bg: rgba(0,0,0,0);" th:class="|comment${comment.commentId} hidden|">
+            <td style="font-weight: bolder"> ㄴ </td>
+            <td>
+              <input th:id="|replyInput${comment.commentId}|" class="form-control"
+                     style="text-align: left;">
+            </td>
+            <td th:if="${loginUser != null && comment.cmtWriteId==loginUser.userId}"
+                th:id="${comment.commentId}"
+                th:utext="|${replyDeleteIcon}|">
+            </td>
+            <td th:unless="${loginUser != null && comment.cmtWriteId==loginUser.userId}"> </td>
+            <td>
+              <button style="float: left" class="btn btn-primary" id="replyButton"
+                      type="button" th:onclick="|addReply(${comment.commentId})|">등록</button>
+            </td>
+          <tr/>
+          <div th:each="reply : ${replies}">
+            <tr th:if="${reply.commentId == comment.commentId}">
+              <td style="font-size: 14px" th:text="|ㄴ${reply.getRplWriteId}|"> 대댓글 작성자 </td>
+              <td style="text-align: left;padding-left: 25px; font-size: 15px" th:text="${reply.content}"></td>
+              <td th:if="${loginUser != null && reply.getRplWriteId==loginUser.userId}" th:id="|reply_${reply.rplId}|"
+                  th:utext="|${replyDeleteIcon}|">
+              </td>
+              <td th:unless="${loginUser != null && reply.getRplWriteId==loginUser.userId}"> </td>
+              <td style="text-align: left;font-size: 14px" th:text="${reply.getRplDate}"></td>
+            </tr>
+          </div>
+        </div>
         </tbody>
       </table>
       <br/>
@@ -181,5 +259,6 @@
 </body>
 <script th:inline="javascript">
   var boardId = /*[[${board.id}]]*/;
+  var loginUserId = /*[[${loginUser.userId}]]*/;
 </script>
 </html>

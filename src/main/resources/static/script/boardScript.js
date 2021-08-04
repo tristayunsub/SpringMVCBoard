@@ -14,15 +14,13 @@ function deleteBoardConfirm(){
         return false;
     }
 }
-function deleteCommentConfirm(obj){
-    console.log(obj);
+function deleteComment(obj){
     var commentId = obj.parentNode.id;
     var comment = {
         boardId : boardId,
         commentId : commentId
     }
     var jsonData = JSON.stringify(comment);
-    console.log(jsonData);
     if (confirm("댓글을 삭제하시겠습니까?") == true){
         $.ajax({
             url: "/comment/delete/"+boardId,
@@ -33,7 +31,10 @@ function deleteCommentConfirm(obj){
             success: function(data){
                 $('#commentDiv').replaceWith(data);
             },
-            error: function (){
+            error:
+                // function(request,status,error){
+                // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);}
+                function (){
                 location.href='/login?redirectURL=/board/list/'+boardId;
                 alert("로그인해주세요");
             }
@@ -47,7 +48,7 @@ function editForm(){
     location.href='/board/edit/'+boardId;
 }
 function addComment(){
-    if($("#content"))
+    // if($("#content"))
     var comment = {
         content : $("#content").val(),
     }
@@ -61,9 +62,139 @@ function addComment(){
         success: function(data){
             $('#commentDiv').replaceWith(data);
         },
-        error: function (){
+        error:
+            // function(request,status,error){
+            // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            function (){
             location.href='/login?redirectURL=/board/list/'+boardId;
             alert("로그인해주세요");
         }
     });
 }
+function addReply(obj){
+     if($("#replyInput"+obj).val()==""){
+         $('.comment'+obj).removeClass("appear");
+         $('.comment'+obj).addClass('disappear');
+         return;
+     }
+    var comment = {
+        content : $("#replyInput"+obj).val(),
+    }
+    var jsonData = JSON.stringify(comment);
+
+    $.ajax({
+        type:"post",
+        url: "/comment/reply/add/"+boardId+"/"+obj,
+        dataType:"text",
+        contentType: "application/json; charset-utf-8",
+        data:jsonData,
+        success: function(data){
+            $('#commentDiv').replaceWith(data);
+        },
+        error:
+            // function(request,status,error){
+            // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            function (){
+            location.href='/login?redirectURL=/board/list/'+boardId;
+            alert("로그인해주세요");
+        }
+    });
+}
+
+function deleteReply(obj){
+    var rplId = obj.parentNode.id.split('_')[1];
+    var reply = {
+        rplId : rplId
+    }
+    var jsonData = JSON.stringify(reply);
+    if (confirm("댓글을 삭제하시겠습니까?") == true){
+        $.ajax({
+            url: "/comment/reply/delete/"+boardId+"/"+rplId,
+            type:"post",
+            dataType: "text",
+            contentType: "application/json; charset-utf-8",
+            data:jsonData,
+            success: function(data){
+                $('#commentDiv').replaceWith(data);
+            },
+            error:
+            function(request,status,error){
+            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);}
+            //     function (){
+            //         location.href='/login?redirectURL=/board/list/'+boardId;
+            //         alert("로그인해주세요");
+            //     }
+        });
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function replyForm(obj){
+
+    if($('.comment'+obj).hasClass('appear')){
+        $('.comment'+obj).removeClass("appear");
+        $('#replyInput').removeClass("appear");
+        $('.comment'+obj).addClass('disappear');
+        $('#replyInput').addClass("disappear");
+    }else if($('.comment'+obj).hasClass('disappear')){
+        $('.comment'+obj).removeClass('disappear');
+        $('.comment'+obj).addClass('appear');
+        $('#replyInput').removeClass("disappear");
+        $('#replyInput').addClass("appear");
+    }else{
+        $('.comment'+obj).addClass('appear');
+        $('#replyInput').addClass("appear");
+    };
+
+
+}
+
+function addRecommend(obj){
+    var recommend = {
+        boardId : boardId,
+        likeId : loginUserId
+    }
+    var jsonData = JSON.stringify(recommend);
+    console.log(jsonData);
+    if (confirm("해당글을 추천하시겠습니까?") == true){
+        $.ajax({
+            url: "/board/recommend",
+            type:"post",
+            dataType: "text",
+            contentType: "application/json; charset-utf-8",
+            data:jsonData,
+            success: function(data){
+                $('#recommendDiv').replaceWith(data);
+            },
+            error:
+                // function(request,status,error){
+                //     alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);}
+                function (){
+                    alert("추천은 1번만 가능합니다.");
+                }
+        });
+        return true;
+    }else{
+        return false;
+    }
+
+}
+
+
+
+
+// $(function(){
+//     $('#likeButton').mousedown(function(){
+//         if($('#likeButton').hasClass('bi-hand-thumbs-up')){
+//             $('#likeButton').removeClass('bi-hand-thumbs-up')
+//             $('#likeButton').addClass('bi-hand-thumbs-up-fill')
+//         }else{
+//             $('#likeButton').removeClass('bi-hand-thumbs-up-fill')
+//             $('#likeButton').addClass('bi-hand-thumbs-up')
+//         }
+//     }).click(function() {
+//         return false;
+//     });
+// });

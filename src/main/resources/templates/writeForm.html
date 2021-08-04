@@ -51,13 +51,33 @@
 </div> <!-- /container -->
 </body>
 <script type="text/javascript">
+  // function hoverdd(t){
+  //   for(var i=0; i<t; i++){
+  //     $('#img_span_'+i).hover(function(){
+  //       $('#deleteButton_'+i).css('visibility','visible');
+  //       $('#addImg_'+i).css('opacity','0.6');
+  //       $('#addImg_'+i).css('border','.5px solid black');
+  //       alert('hi');
+  //     }, function(){
+  //       $('#deleteButton_'+i).css('visibility','hidden');
+  //       $('#addImg_'+i).css('opacity','1');
+  //       $('#addImg_'+i).css('border','');
+  //     })
+  //   }
+  // }
   var fileInfoArr=[];
   function fileRemove(index){
     fileInfoArr.splice(index,1);
-    var imgId='#img_id_'+index;
+    var imgId='#img_span_'+index;
+    console.log(imgId);
     $(imgId).remove()
   }
   function previewImage(targetObj, view){
+    console.log(fileInfoArr);
+    console.log(targetObj.files);
+
+    fileInfoArr = [];
+    console.log(fileInfoArr);
     var preview = document.getElementById(view);
     var files = targetObj.files;
     for (var i=0; i<files.length; i++){
@@ -68,7 +88,7 @@
       }
       fileInfoArr.push(file);
       var span = document.createElement('span');
-      span.id="img_id_"+i;
+      span.id="img_span_"+i;
       span.style.width='150px';
       span.style.height='150px';
       span.className='previewBox';
@@ -76,29 +96,37 @@
       span.style.display='inline-block';
       span.style.margin='5px';
       span.addEventListener('mouseover',function(){
-        p.style.visibility='visible';
-        img.style.opacity='0.6';
-        img.style.border='.5px solid black'
+        //img
+        this.children.item(0).style.opacity='0.6';
+        this.children.item(0).style.border='.5px solid black';
+        this.children.item(1).style.visibility='visible';
+        // window.document.getElementById("deleteButton_"+i).style.visibility='visible';
+        // window.document.getElementById("addImg_"+i).style.opacity='0.6';
+        // window.document.getElementById("addImg_"+i).style.border='.5px solid black'
+        // $('#deleteButton_'+i).css('visibility','visible');
+        // img.style.opacity='0.6';
+        // img.style.border='.5px solid black'
+        // p.style.visibility='visible';
       });
+
       span.addEventListener('mouseout', function (){
-        p.style.visibility='hidden';
-        img.style.opacity='1';
-        img.style.border='';
+        this.children.item(0).style.opacity='1';
+        this.children.item(0).style.border='';
+        this.children.item(1).style.visibility='hidden';
       });
       preview.appendChild(span);
 
       var img = document.createElement("img");
-      img.className="addImg";
-      img.classList.add("obj");
+      img.id="addImg_"+i;
       img.file = file;
       img.style.width='inherit';
       img.style.height='inherit';
       img.style.transitionDuration=' .5s';
-
+      img.style.borderRadius='5px';
       span.appendChild(img);
 
       var p = document.createElement("div");
-      p.className="deleteButton";
+      p.id="deleteButton_"+i;
       p.style.position='absolute';
       p.style.visibility='hidden';
       p.style.top='4px';
@@ -128,6 +156,7 @@
         reader.readAsDataURL(file);
       }
     }
+    // hoverdd(files.length);
   }
 </script>
 </html>

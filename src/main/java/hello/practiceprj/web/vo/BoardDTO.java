@@ -1,4 +1,4 @@
-package hello.practiceprj.web.validation;
+package hello.practiceprj.web.vo;
 
 import hello.practiceprj.domain.UploadFile;
 import lombok.Data;
