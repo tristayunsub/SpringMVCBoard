@@ -1,25 +1,18 @@
 package hello.practiceprj.web.login;
 
 import hello.practiceprj.domain.User;
-import hello.practiceprj.service.user.UserService;
 import hello.practiceprj.service.user.UserServiceImpl;
 import hello.practiceprj.service.user.login.LoginService;
+import hello.practiceprj.web.vo.UserInfo;
 import hello.practiceprj.web.session.SessionConst;
 import lombok.RequiredArgsConstructor;
-import oracle.jdbc.proxy.annotation.Post;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -33,18 +26,19 @@ public class LoginController {
         return "user/loginForm";
     }
 
-    @PostMapping("/login")
+    @RequestMapping("/login/auth")
     public String login(@Validated @ModelAttribute LoginForm form,
                         BindingResult bindingResult, HttpServletRequest request,
-                        @RequestParam(defaultValue = "/board/list") String redirectURL) {
+                        @RequestParam(defaultValue = "/board/list") String redirectURL,@PathVariable String success) {
+        System.out.println(success);
+        System.out.println("오나?");
         if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
             return "user/loginForm";
         }
 
-        userService.loadUserByUsername(form.getUserId()).getPassword();
-
-
-        User loginUser = loginService.login(form.getUserId(), form.getPassword());
+        UserInfo user = userService.loadUserByUsername(form.getUserId());
+        UserInfo loginUser = userService.login(user.getUsername(), user.getPassword());
         if (loginUser == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "user/loginForm";
@@ -52,6 +46,12 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginUser);
         return "redirect:" + redirectURL;
+    }
+
+    @RequestMapping("/login/success")
+    public String loginSuccess(){
+        System.out.println("로그인 완료");
+        return null;
     }
 
     @GetMapping("/logout")
@@ -63,7 +63,7 @@ public class LoginController {
         return "redirect:/board/list";
     }
     @GetMapping("/signup")
-    public String signupForm(@ModelAttribute("user") User user){
+    public String signupForm(@ModelAttribute("user") UserInfo user){
         return "user/signupForm";
     }
 
@@ -81,9 +81,9 @@ public class LoginController {
             return "user/signupForm";
         }
         userService.signup(user);
-        User loginUser = loginService.login(user.getUserId(), user.getPassword());
+//        User loginUser = loginService.login(user.getUserId(), user.getPassword());
         HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.LOGIN_USER, loginUser);
+        session.setAttribute(SessionConst.LOGIN_USER, user);
         return "redirect:/board/list";
     }
 

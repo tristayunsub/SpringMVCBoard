@@ -2,7 +2,7 @@ package hello.practiceprj.service.user;
 
 import hello.practiceprj.domain.User;
 import hello.practiceprj.mapper.UserMapper;
-import hello.practiceprj.web.security.UserInfo;
+import hello.practiceprj.web.vo.UserInfo;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,9 +13,11 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userMapper = userMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -26,14 +28,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserInfo getUser(String userId) {
-        return userMapper.findById(userId);
+        UserInfo user = userMapper.findById(userId);
+        return user;
     }
 
     @Override
-    public Long signup(User user) {
+    public void signup(User user) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userMapper.signup();
+        userMapper.signup(user);
     }
 
     @Override
@@ -51,6 +54,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserInfo user = getUser(username);
         if(user == null){
             throw new UsernameNotFoundException("ID : "+username + "는 존재하지 않습니다.");
+        }
+        return user;
+    }
+
+    public UserInfo login(String loginId, String password){
+        UserInfo user = loadUserByUsername(loginId);
+        if(bCryptPasswordEncoder.matches(password, user.getPassword())){
+            System.out.println("맞음");
+            return null;
+        }else{
+            System.out.println("틀림");
         }
         return user;
     }

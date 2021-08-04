@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<body th:fragment="head">
+    <div>
+      <button class="btn btn-primary" style="float: right; font-size: 14px" th:if="${loginUser == null}"
+              th:onclick="|location.href='@{/login}'|">로그인</button>
+      <span style="float: right">
+            <span sec:authorize="isAuthenticated()">
+                <span th:text="|${loginUser.nickname}(${loginUser.userId})님|">사용자명</span>
+                <button th:if="${loginUser != null}" th:onclick="|location.href='@{/logout}'|" class="btn btn-primary" style="font-size: 14px">로그아웃</button>
+          </span>
+      </span>
+    </div>
+</body>
+</head>
+</html>

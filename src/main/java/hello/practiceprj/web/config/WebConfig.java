@@ -2,6 +2,7 @@ package hello.practiceprj.web.config;
 
 import hello.practiceprj.web.argumentResolver.LoginUserArgumentResolver;
 import hello.practiceprj.web.interceptor.LoginCheckInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,17 +14,6 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginUserArgumentResolver());
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor())
-                .order(1).addPathPatterns("/board/write", "/board/edit/**", "/delete");
-    }
-
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){

@@ -1,6 +1,9 @@
 function deleteBoardConfirm(){
     if (confirm("정말 삭제하시겠습니까?") == true) {
         $.ajax({
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header,token);
+            },
             url: "/board/delete",
             data: {"boardId":boardId},
             type: "DELETE",
@@ -23,6 +26,9 @@ function deleteComment(obj){
     var jsonData = JSON.stringify(comment);
     if (confirm("댓글을 삭제하시겠습니까?") == true){
         $.ajax({
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header,token);
+            },
             url: "/comment/delete/"+boardId,
             type:"post",
             dataType: "text",
@@ -48,12 +54,14 @@ function editForm(){
     location.href='/board/edit/'+boardId;
 }
 function addComment(){
-    // if($("#content"))
     var comment = {
         content : $("#content").val(),
     }
     var jsonData = JSON.stringify(comment);
     $.ajax({
+        beforeSend: function(xhr){
+            xhr.setRequestHeader(header,token);
+        },
         type:"post",
         url: "/comment/add/"+boardId,
         dataType:"text",
@@ -83,6 +91,9 @@ function addReply(obj){
     var jsonData = JSON.stringify(comment);
 
     $.ajax({
+        beforeSend: function(xhr){
+            xhr.setRequestHeader(header,token);
+        },
         type:"post",
         url: "/comment/reply/add/"+boardId+"/"+obj,
         dataType:"text",
@@ -109,6 +120,9 @@ function deleteReply(obj){
     var jsonData = JSON.stringify(reply);
     if (confirm("댓글을 삭제하시겠습니까?") == true){
         $.ajax({
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header,token);
+            },
             url: "/comment/reply/delete/"+boardId+"/"+rplId,
             type:"post",
             dataType: "text",
@@ -160,6 +174,9 @@ function addRecommend(obj){
     console.log(jsonData);
     if (confirm("해당글을 추천하시겠습니까?") == true){
         $.ajax({
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header,token);
+            },
             url: "/board/recommend",
             type:"post",
             dataType: "text",

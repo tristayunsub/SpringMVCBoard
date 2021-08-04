@@ -35,15 +35,7 @@
 <body>
 <div class="container" style="max-width: 1100px; min-width: 800px" id="bodyContainer">
   <br/>
-  <div th:object="${loginUser}">
-      <button class="btn btn-primary" style="float: right; font-size: 14px" th:if="${loginUser == null}"
-              th:onclick="|location.href='@{/login}'|">로그인</button>
-      <span style="float: right">
-        <span th:if="${loginUser != null}" th:text="|${loginUser.userName}(${loginUser.userId})님|">사용자명</span>
-        <button th:if="${loginUser != null}" th:onclick="|location.href='@{/logout}'|"
-                class="btn btn-primary" style="font-size: 14px">로그아웃</button>
-      </span>
-  </div>
+  <div th:replace="fragment/topFragment :: head"></div>
   <div class="py-5 text-center">
     <h2><a style="text-decoration: none" th:href="@{/board/list}">게시판</a></h2>
   </div>

@@ -3,12 +3,13 @@ package hello.practiceprj.web.board;
 import hello.practiceprj.domain.*;
 import hello.practiceprj.file.FileStore;
 import hello.practiceprj.service.board.BoardServiceImpl;
-import hello.practiceprj.web.argumentResolver.Login;
+import hello.practiceprj.web.vo.UserInfo;
 import hello.practiceprj.web.vo.BoardDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,7 +38,7 @@ public class BoardController {
     @RequestMapping("/list")
     public String list(Model model,
                        @RequestParam (value = "p", required = false, defaultValue = "1") int queryNum,
-                       @Login User loginUser) {
+                       @AuthenticationPrincipal UserInfo loginUser) {
         List<Board> boards = boardService.getBoardList();
         int lastNum = (boards.size()/15)+1;
         model.addAttribute("boards", boards);
@@ -46,7 +47,7 @@ public class BoardController {
         model.addAttribute("startNum",(boards.size()-(queryNum-1)*15)-14);
         model.addAttribute("endNum", boards.size()-(queryNum-1)*15);
         if(loginUser != null){
-        model.addAttribute("loginUser", loginUser);
+            model.addAttribute("loginUser", loginUser);
         }
         return "boardlist";
     }
@@ -57,7 +58,7 @@ public class BoardController {
                         @ModelAttribute Reply reply,
                         Model model, HttpServletResponse response,
                         HttpServletRequest request,
-                        @Login User loginUser) {
+                        @AuthenticationPrincipal UserInfo loginUser) {
         Board board = boardService.getBoard(boardId);
         List<Board> boards = boardService.getBoardList();
         List<Reply> replies = boardService.getReplies(boardId);
@@ -132,7 +133,7 @@ public class BoardController {
                              BindingResult bindingResult,
                              Model model,
                              RedirectAttributes redirectAttributes,
-                             @Login User loginUser) throws IOException {
+                             @AuthenticationPrincipal UserInfo loginUser) throws IOException {
 
         if (bindingResult.hasErrors()) {
             return "writeForm";
@@ -172,7 +173,7 @@ public class BoardController {
 
     @GetMapping("/edit/{boardId}")
     public String boardEditForm(Model model, @PathVariable int boardId,
-                                @Login User loginUser, HttpServletResponse response) throws IOException {
+                                @AuthenticationPrincipal UserInfo loginUser, HttpServletResponse response) throws IOException {
         Board board = boardService.getBoard(boardId);
         if(!loginUser.getUserId().equals(board.getWriteId())){
             response.setContentType("text/html; charset=UTF-8");
@@ -200,7 +201,7 @@ public class BoardController {
 
     @RequestMapping("/search")
     public String search(Model model,
-                         @Login User loginUser, @RequestParam(value = "searchText") String searchText,
+                         @AuthenticationPrincipal UserInfo loginUser, @RequestParam(value = "searchText") String searchText,
                          @RequestParam(value = "searchCategory") String searchCategory,
                          @RequestParam (value = "p", required = false, defaultValue = "1") int queryNum) {
         List<Board> boards = new ArrayList<>();
@@ -230,7 +231,7 @@ public class BoardController {
     }
 
     @PostMapping("/recommend")
-    public String addRecommend(@RequestBody Recommend recommend, @Login User loginUser, Model model){
+    public String addRecommend(@RequestBody Recommend recommend, @AuthenticationPrincipal UserInfo loginUser, Model model){
         if (loginUser != null) {
             model.addAttribute("loginUser", loginUser);
         }

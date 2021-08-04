@@ -2,10 +2,10 @@ package hello.practiceprj.web.board;
 
 import hello.practiceprj.domain.Comment;
 import hello.practiceprj.domain.Reply;
-import hello.practiceprj.domain.User;
 import hello.practiceprj.service.board.BoardServiceImpl;
-import hello.practiceprj.web.argumentResolver.Login;
+import hello.practiceprj.web.vo.UserInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,7 +31,7 @@ public class CommentController {
 
     @PostMapping("/add/{boardId}")
     public String commentAdd(@Validated @RequestBody Comment comment, BindingResult bindingResult,
-                             @PathVariable int boardId, @Login User loginUser, Model model,
+                             @PathVariable int boardId, @AuthenticationPrincipal UserInfo loginUser, Model model,
                              HttpServletResponse response) throws IOException {
         if(loginUser==null){
             response.sendError(500);
@@ -62,7 +62,7 @@ public class CommentController {
     }
 
     @PostMapping("/delete/{boardId}")
-    public String deleteComment(@RequestBody Comment comment, @Login User loginUser, Model model,
+    public String deleteComment(@RequestBody Comment comment, @AuthenticationPrincipal UserInfo loginUser, Model model,
                                 HttpServletResponse response, @PathVariable int boardId) throws IOException {
         if(loginUser==null){
             response.sendError(500);
@@ -85,7 +85,7 @@ public class CommentController {
 
     @PostMapping("/reply/add/{boardId}/{commentId}")
     public String addReply(@RequestBody Reply reply, @PathVariable int boardId,
-                           @PathVariable int commentId, @Login User loginUser, Model model,
+                           @PathVariable int commentId, @AuthenticationPrincipal UserInfo loginUser, Model model,
                            HttpServletResponse response, @ModelAttribute Comment comment) throws IOException {
         if(loginUser==null){
             response.sendError(500);
@@ -110,7 +110,7 @@ public class CommentController {
 
     @PostMapping("/reply/delete/{boardId}/{rplId}")
     public String deleteReply(@PathVariable int rplId, @PathVariable int boardId,
-                            @Login User loginUser, Model model,
+                            @AuthenticationPrincipal UserInfo loginUser, Model model,
                            HttpServletResponse response, @ModelAttribute Comment comment) throws IOException {
         if(loginUser==null){
             response.sendError(500);

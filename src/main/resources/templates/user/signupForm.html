@@ -5,6 +5,7 @@
   <link href="../css/bootstrap.min.css"
         th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
   <link href="" th:href="@{/css/custom.css}" rel="stylesheet"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <style>
     .gender{
       background-color: gray;
@@ -54,8 +55,8 @@
     <div class="form-group row">
       <label class="col-form-label col-4"  >이름*</label>
       <div class="col-8">
-        <input type="text" th:field="*{userName}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
-        <div class="field-error" th:errors="*{userName}">
+        <input type="text" th:field="*{nickname}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <div class="field-error" th:errors="*{nickname}">
           아이디
         </div>
       </div>
@@ -78,20 +79,22 @@
     <div class="form-group row">
       <label class="col-form-label col-4"  >이메일</label>
       <div class="col-8">
-        <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" th:field="*{email}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <input type="email" th:field="*{email}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <div class="field-error" th:errors="*{email}">
+        </div>
       </div>
     </div>
     <div class="form-group row">
       <label class="col-form-label col-4"  >휴대폰 번호</label>
       <div class="col-8">
-        <input type="tel" pattern="[0-9]{3}-?[0-9]{4}-?[0-9]{4}|[0-9]{3}-?[0-9]{3}-?[0-9]{4}" th:field="*{phone}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=13/ >
-      </div>
+        <input type="tel" th:field="*{phone}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=13>
+        </div>
     </div>
     <span style="font-size: 10px;float: right">*는 필수사항입니다.</span>
     <hr class="my-4">
     <div class="row">
       <div class="col">
-        <button class="w-100 btn btn-primary btn-lg" id="singupSubmit" type="button" onclick="test()" >회원가입</button>
+        <button class="w-100 btn btn-primary btn-lg" id="singupSubmit" type="button" onclick="signup()" >회원가입</button>
       </div>
       <div class="col">
         <button class="w-100 btn btn-secondary btn-lg"
@@ -99,17 +102,25 @@
                 th:onclick="|location.href='@{/login}'|" type="button">취소</button>
       </div>
     </div>
-  </form>
+</div>
+</form>
 </div> <!-- /container -->
 </body>
 <script type="text/javascript">
-  function test(){
+  function signup(){
     var p1 = document.getElementById('password').value;
     var p2 = document.getElementById('password2').value;
+
+    if($('#password').hasClass('field-error')){
+      $('#password').removeClass('field-error');
+      $('#password2').removeClass('field-error');
+    }
+
     if(p1 != p2){
       document.getElementById('password').classList.add('field-error');
       document.getElementById('password2').classList.add('field-error');
-      document.getElementById('notEqual').innerText='비밀번호가 다릅니다';
+      document.getElementById('notEqual').innerText='비밀번호가 다릅니다.';
+
     } else{
       document.getElementById('password').classList.remove('field-error');
       document.getElementById('password2').classList.remove('field-error');

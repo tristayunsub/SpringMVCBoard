@@ -9,6 +9,7 @@
 .field-error {
     border-color: #dc3545;
     color: #dc3545;
+    font-size: 13px;
     animation: blink 0.7s;
     animation-iteration-count: 2;
     animation-delay: 0.2s;
