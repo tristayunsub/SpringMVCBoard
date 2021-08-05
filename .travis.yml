@@ -27,7 +27,7 @@ deploy:
     bucket: springmvcboard-deploy # 6-3-3에서 생성한 S3 버킷
     region: ap-northeast-2
     skip_cleanup: true
-    acl: public_read
+    acl: private
     wait-until-deployed: true
     on:
       repo:hsp0404/SpringMVCBoard #Github 주소
