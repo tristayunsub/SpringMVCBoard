@@ -20,7 +20,7 @@ notifications:
 
 
 before_deploy:
-  - zip -r SpringMVCBoard*
+  - zip -r SpringMVCBoard *
   - mkdir -p deploy
   - mv SpringMVCBoard.zip deploy/SpringMVCBoard.zip
 
