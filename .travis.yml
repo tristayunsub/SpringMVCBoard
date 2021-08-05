@@ -37,3 +37,17 @@ deploy:
     on:
       repo: hsp0404/SpringMVCBoard
       branch: master
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: springmvcboard-deploy
+    key: springmvcboard.zip
+    bundle_type: zip
+    application: SpringMVCBoard
+    deployment_group: SpringMVCBoard-group
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      repo: hsp0404/SpringMVCBoard
+      branch: master
