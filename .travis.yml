@@ -19,6 +19,11 @@ notifications:
       - hsp4567@naver.com
 
 
+before_deploy:
+  - zip -r SpringMVCBoard*
+  - mkdir -p deploy
+  - mv SpringMVCBoard.zip deploy/SpringMVCBoard.zip
+
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
@@ -28,6 +33,7 @@ deploy:
     skip_cleanup: true
     acl: private
     wait-until-deployed: true
+    local_dir: deploy
     on:
       repo: hsp0404/SpringMVCBoard
       branch: master
