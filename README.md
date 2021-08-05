@@ -1,4 +1,4 @@
-SpringMVC Board Project
+# SpringMVC Board Project ![Build Status](https://travis-ci.com/hsp0404/SpringMVCBoard.svg?branch=master)
 ## 목차
 1. [**개발 목적**](#개발-목적)
 
