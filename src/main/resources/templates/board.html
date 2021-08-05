@@ -100,6 +100,7 @@
   <div th:each="file : ${files}">
     <img th:src="|/board/images/${file.getStoreFileName()}|" class="img-fluid" id="boardImage">
     <br/>
+    <span th:text="|/board/images/${file.getStoreFileName()}|"></span>
     <br/>
   </div>
   <p th:text="${board.content}"></p>
