@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.5.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'war'
 }
 
 group = 'hello'
@@ -28,9 +29,12 @@ dependencies {
 	implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.32'
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-security-test'
+//	implementation 'org.springframework.boot:spring-security-test'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
+}
+bootWar{
+	archiveName("demo.war")
 }
 
 test {
