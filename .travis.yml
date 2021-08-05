@@ -29,5 +29,5 @@ deploy:
     acl: private
     wait-until-deployed: true
     on:
-      repo:hsp0404/SpringMVCBoard
+      repo: hsp0404/SpringMVCBoard
       branch: master
