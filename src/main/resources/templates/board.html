@@ -97,7 +97,6 @@
   <br>
   <hr class="my-4">
   <br>
-<!--  <img th:each="imageFile : ${board.getImageFiles()}" th:src="|${imageFile.getStoreFileName()}|">-->
   <div th:each="file : ${files}">
     <img th:src="|/board/images/${file.getStoreFileName()}|" class="img-fluid" id="boardImage">
     <br/>
