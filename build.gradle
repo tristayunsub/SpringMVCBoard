@@ -33,9 +33,6 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
 }
-bootWar{
-	archiveName("demo.war")
-}
 
 test {
 	useJUnitPlatform()
