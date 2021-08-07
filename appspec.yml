@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source:  /
-    destination: /home/ec2-user/app/tarvis/SpringMVCBoard/
+    destination: /home/ec2-user/app/travis/SpringMVCBoard/
 
 hooks:
   AfterInstall:
