@@ -5,6 +5,8 @@
   <link href="../css/bootstrap.min.css"
         th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
   <link href="" th:href="@{/css/custom.css}" rel="stylesheet"/>
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <style>
     .gender{
@@ -80,8 +82,16 @@
       <label class="col-form-label col-4"  >이메일</label>
       <div class="col-8">
         <input type="email" th:field="*{email}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
+        <span style="float: right;font-size: 14px;color: red" id="nonValidated"></span>
         <div class="field-error" th:errors="*{email}">
         </div>
+      </div>
+    </div>
+    <div id="validDiv" class="form-group row" style="margin-bottom: 9px">
+      <button type="button" class="btn btn-primary col-form-label col-4"
+              style="padding: 1px" id="emailButton" onclick="sendMail()">인증번호 전송</button>
+      <div class="col-8">
+        <input type="text" id="valid" class="form-control form-control-sm col-8" disabled>
       </div>
     </div>
     <div class="form-group row">
@@ -107,20 +117,27 @@
 </div> <!-- /container -->
 </body>
 <script type="text/javascript">
+  var emailValidated;
   function signup(){
     var p1 = document.getElementById('password').value;
     var p2 = document.getElementById('password2').value;
+
 
     if($('#password').hasClass('field-error')){
       $('#password').removeClass('field-error');
       $('#password2').removeClass('field-error');
     }
 
+    if(emailValidated == 0) {
+      $('#email').addClass('field-error');
+      $('#nonValidated').text = '이메일 인증은 필수 입니다.';
+      return;
+    }
+
     if(p1 != p2){
       document.getElementById('password').classList.add('field-error');
       document.getElementById('password2').classList.add('field-error');
       document.getElementById('notEqual').innerText='비밀번호가 다릅니다.';
-
     } else{
       document.getElementById('password').classList.remove('field-error');
       document.getElementById('password2').classList.remove('field-error');
@@ -128,5 +145,56 @@
       document.getElementById('signupForm').submit();
     }
   }
+  var token = $("meta[name='_csrf']").attr("content");
+  var header = $("meta[name='_csrf_header']").attr("content");
+
+  function sendMail(){
+
+    var to = $('#email').val()
+    var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+    if(to.match(regExp) != null){
+      var mailData = {
+        to : to,
+      }
+      var jsonData = JSON.stringify(mailData);
+      $.ajax({
+        beforeSend: function(xhr){
+          xhr.setRequestHeader(header,token);
+        },
+        type: 'post',
+        url: '/board/sendMail',
+        data: jsonData,
+        contentType: "application/json; charset-utf-8",
+        dataType: 'text',
+        success: function (data){
+          alert('이메일로 인증번호를 발송했습니다.');
+          $('#valid').removeAttr("disabled");
+          $('#emailButton').text('확인');
+          $('#emailButton').removeAttr("onclick");
+          $('#emailButton').attr("onclick", "validConfirm("+data+")");
+        }, error:
+          function(request,status,error) {
+          alert('이메일 전송 실패');
+            // alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+        }
+      })
+
+    }else{
+    }
+  }
+  function validConfirm(obj){
+    var input = $('#valid').val();
+    if(input == obj){
+      $('#emailButton').removeAttr("onclick")
+      $('#emailButton').attr("onclick", "alert(\'이미 인증되었습니다\')");
+      $('#valid').val('인증되었습니다.');
+      $('#valid').attr("disabled","");
+      emailValidated = 1;
+    }else{
+      alert("인증번호를 다시 확인해주세요.");
+    }
+
+  }
+
 </script>
 </html>
