@@ -4,30 +4,29 @@
 
 2. [**개발 환경**](#개발-환경)
 
-3. **개발 일정**
+3. **프로젝트 구조**
 
-4. **프로젝트 구조**
+4. **DB Modeling**
 
-5. **DB Modeling**
+5. **기능**
 
-6. **기능**
-
-7. **느낀점**
+6. **느낀점**
 ---
 ## 개발목적
 * Web 백엔드 개발자가 되기 위해 가장 보편적인 Spring의 기본기를 다지기 위함입니다.
-* 현재는 모든 지식이 완성되지 않은 상태에서 계속 공부 하며 기능을 추가하고 있습니다.
 ---
 ## 개발 환경
 * bootstrap 5.0.2
 * thymeleaf 
 * Java 11
-* Oracle 11g
+* Oracle 11g (Oracle Cloud / CentOS)
 * mybatis
 * lombok
 * Spring Boot 2.5.3
 * Gradle
 * IntellJ 2021-01
+* Spring Security
+* Amazon Web Service (Amamazon Linux)
 
 
 [목차](#목차)
