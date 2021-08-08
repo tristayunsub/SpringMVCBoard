@@ -34,6 +34,9 @@
              placeholder="비밀번호" class="form-control" maxlength=20/>
       <div class="field-error" th:errors="*{password}"></div>
     <hr class="my-4">
+      <div class="field-error" th:if="${error==1}"
+           style="text-align: center;font-size: 20px;font-weight: bolder">아이디 혹은 비밀번호가 틀립니다.</div>
+      <br/>
     <div class="row">
       <div class="col">
         <button class="w-100 btn btn-primary btn-lg" type="submit">로그인</button>

@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Controller
@@ -34,6 +38,7 @@ public class BoardController {
 
     private final BoardServiceImpl boardService;
     private final FileStore fileStore;
+    private final JavaMailSenderImpl mailSender;
 
     @RequestMapping("/list")
     public String list(Model model,
@@ -255,5 +260,16 @@ public class BoardController {
     @GetMapping("/images/{filename}")
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:"+fileStore.getFullPath(filename));
+    }
+
+    @ResponseBody
+    @RequestMapping("/sendMail")
+    public String sendMail(@RequestBody SimpleMailMessage mail){
+        Random random = new Random();
+        int key = random.nextInt(8999) + 1000;
+        mail.setSubject("hsp94.site 회원가입 인증메일 입니다.");
+        mail.setText("인증번호 : "+String.valueOf(key)+"를 입력해주세요");
+        mailSender.send(mail);
+        return String.valueOf(key);
     }
 }

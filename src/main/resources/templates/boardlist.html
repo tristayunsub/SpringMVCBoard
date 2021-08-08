@@ -6,6 +6,8 @@
   <link th:href="@{/css/bootstrap.min.css}"
           href="../css/bootstrap.min.css" rel="stylesheet">
   <link href="" th:href="@{/css/custom.css}" rel="stylesheet"/>
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
   <style>
     th, td {
       text-align: center;
@@ -36,7 +38,9 @@
   <br/>
   <div th:replace="fragment/topFragment :: head">
   </div>
-  <h2  class="py-5 text-center">게시판</h2>
+  <div class="py-5 text-center">
+    <h2><a style="text-decoration: none" th:href="@{/board/list}">게시판</a></h2>
+  </div>
   <hr class="my-4">
   <div id="boardTable">
     <div>
@@ -119,6 +123,8 @@
     var searchCategory = $("#searchBox option:selected").val();
     location.href = "/board/search?searchText="+searchText+"&searchCategory="+searchCategory;
   }
+
+
 </script>
 </body>
 </html>

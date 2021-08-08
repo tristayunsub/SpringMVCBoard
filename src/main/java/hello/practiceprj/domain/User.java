@@ -25,6 +25,7 @@ public class User {
     private int gender;
     private String birth;
     @Email
+    @NotBlank
     private String email;
     private String phone;
     private Date signupDate;
