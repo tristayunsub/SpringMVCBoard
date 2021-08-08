@@ -41,7 +41,7 @@
   </div>
   <hr class="my-4">
   <div id="boardTable">
-    <div>
+    <div th:if="${boards.size()>0}">
       <table class="table">
         <thead>
         <tr>
@@ -64,6 +64,9 @@
         </tr>
         </tbody>
       </table>
+    </div>
+    <div style="text-align: center" th:if="${boards.size()==0}">
+      <span>검색 결과가 없습니다.</span>
     </div>
     <div class="row">
       <div class="col">
