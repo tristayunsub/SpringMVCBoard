@@ -6,7 +6,7 @@
 
 3. [**프로젝트 구조**](#프로젝트-구조)
 
-4. **기능**
+4. [**기능**](#기능)
 
 5. **느낀점**
 ---
@@ -36,6 +36,14 @@
 ![DB](https://user-images.githubusercontent.com/73703641/128659623-3be2d304-6a87-4580-b98c-0b5768f980cf.png)
 
 회원이 삭제되더라도 글은 남겨놓고록 했고, 게시글이 삭제되면 댓글,대댓글,파일,추천 모두 사라지게 CASCADE 구성을 했습니다.
+
+데이터베이스는 오라클 클라우드 프리티어 가상 인스턴스를 통해 구축했습니다.
+
+![오라클클라우드](https://user-images.githubusercontent.com/73703641/128668428-8357063c-a9f3-4b56-b5ce-6c52a0b00def.png)
+![오라클클라우드2-수정](https://user-images.githubusercontent.com/73703641/128668740-795bd169-7e80-4122-96ff-8017325ecc40.png)
+
+특별한 이유가 있는 것은 아니고 M1 Mac을 통해 실습을 진행했는데 로컬에 도저히 Oracle을 깔 수 있는 방법이 없어   
+리눅스 공부 / AWS 배포 전 가상 인스턴스 공부를 겸하기 위해 이 방법을 택했습니다.
 
 ---
 ![구조1](https://user-images.githubusercontent.com/73703641/128649186-b76cfd3f-a7fc-42fe-bf24-01db1590435d.png)
@@ -186,7 +194,7 @@ Spring Security를 활용하여 로그인 인증을 구현했습니다.
 미리보기 기능은 JavaScript로 구현했으며 /resources/templates/writeForm.html에 작성되어 있습니다.
 
 ---
-이미지 파일은 서버 폴더 밖 외부에 저장되도록 했으며   
+이미지 파일은 서버 구동 폴더 밖 외부에 저장되도록 했으며   
 DB에는 중복이 되지 않게 UUID를 이용한 난수 파일명과 업로드 파일명을 Insert했습니다.
 
 ### 이미지 DB 저장 결과
@@ -265,6 +273,8 @@ Get요청에서 로그인된 유저를 확인하여 일치하지 않으면 이�
             }
         }
 ```
+
+---
 
 > ### 게시판 기능
 >>댓글 / 대댓글
@@ -354,5 +364,46 @@ Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 
 
 ![게시물검색](https://user-images.githubusercontent.com/73703641/128665712-5fdd65c6-a0e5-40b9-8cd4-78f40c2fa060.gif)
 
+---
 
+> ### 보안 / 배포
+>> 보안
 
+ 데이터베이스 접속 정보, 이메일 정보 등은 외부에 저장하고 시작할때 불러들일 수 있도록 했습니다.
+
+```java
+public class PracticePrjApplication {
+
+	public static final String APPLICATION_LOCATIONS_WIN =
+           //윈도우에서 테스트 할 경우의 구성파일 경로 
+            "spring.config.location=classpath:application.properties,C:/Users/user/real-application.yml";
+	public static final String APPLICATION_LOCATIONS_EC2 =
+            //실제 서버에서 구현할 경우의 구성파일 경로
+            "spring.config.location=classpath:application.properties,/app/.../real-application.yml";
+
+	public static void main(String[] args) {
+		File f = new File("C://Users/user/real-application.yml");
+		//윈도우 경로에 파일이 존재하지 않는경우 (aws 서버)에는 알맞은 경로를 통해 실행한다.
+		if (f.exists()) {
+			new SpringApplicationBuilder(PracticePrjApplication.class)
+                    .properties(APPLICATION_LOCATIONS_WIN).run(args);
+		} else {
+			new SpringApplicationBuilder(PracticePrjApplication.class)
+                    .properties(APPLICATION_LOCATIONS_EC2).run(args);
+		}
+	}
+}
+```
+이전 커밋들에서 빌드 파일안에 각종 비밀번호들이 포함되게 커밋했습니다. 서버 보안 뿐만 아니라
+제 개인정보 보안에도 문제가 생길것 같아 비밀번호를 모두 교체하고 위와 같이 변경했습니다.
+
+---
+
+> ### 보안 / 배포
+>> 배포
+
+배포는 Amazon Web Service 프리티어를 통해 배포했습니다. Amazon Linux 인스턴스를 사용했습니다.
+
+---
+
+Travis, Amazon S3, Amazon CodeDeploy를 통한 무중단 배포 시스템을 구축했습니다.
