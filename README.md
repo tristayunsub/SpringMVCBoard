@@ -8,7 +8,7 @@
 
 4. [**기능**](#기능)
 
-5. **느낀점**
+5. [**느낀점**](#느낀점)
 ---
 ## 개발목적
 * Web 백엔드 개발자가 되기 위해 가장 보편적인 Spring의 기본기를 다지기 위함입니다.
@@ -181,6 +181,8 @@ Spring Security를 활용하여 로그인 인증을 구현했습니다.
 
 ![로그인실패](https://user-images.githubusercontent.com/73703641/128661469-2afa65cc-eb32-47b9-b01c-549139a1668f.gif)
 
+
+[목차](#목차)
 
 ---
 
@@ -364,6 +366,10 @@ Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 
 
 ![게시물검색](https://user-images.githubusercontent.com/73703641/128665712-5fdd65c6-a0e5-40b9-8cd4-78f40c2fa060.gif)
 
+
+[목차](#목차)
+
+
 ---
 
 > ### 보안 / 배포
@@ -397,6 +403,57 @@ public class PracticePrjApplication {
 이전 커밋들에서 빌드 파일안에 각종 비밀번호들이 포함되게 커밋했습니다. 서버 보안 뿐만 아니라
 제 개인정보 보안에도 문제가 생길것 같아 비밀번호를 모두 교체하고 위와 같이 변경했습니다.
 
+yml 설정파일
+````yaml
+---
+spring:
+  profiles: set1
+  #데이터베이스 접속정보
+  datasource:
+    url: jdbc:oracle:thin:@152.70...:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: ...
+    password: ...
+  #이메일 전송 정보
+  mail:
+    username: hsp4567@gmail.com
+    password: ...
+server:
+  port: 8001
+  
+logging:
+    level:
+        root: error
+    file:
+        path: /home/.../log
+        
+
+---
+#무중단 배포를 위해 set1, set2로 나누었습니다.
+spring:
+  profiles: set2
+  datasource:
+    url: jdbc:oracle:thin:@152.70...:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: ...
+    password: ...
+  mail:
+    username: hsp4567@gmail.com
+    password: ...
+
+server:
+  port: 8002
+
+logging:
+  level:
+    root: error
+  file:
+    path: /home/.../log
+````
+
+
+[목차](#목차)
+
 ---
 
 > ### 보안 / 배포
@@ -407,3 +464,218 @@ public class PracticePrjApplication {
 ---
 
 Travis, Amazon S3, Amazon CodeDeploy를 통한 무중단 배포 시스템을 구축했습니다.
+
+1. GitHub에 Push 하면 Travis에서 빌드합니다.
+
+![트래비스](https://user-images.githubusercontent.com/73703641/128670213-74507d2f-e382-4ec0-9ec2-41a168700bbc.png)
+
+2. 압축하여 S3 버킷에 저장합니다.
+
+![S3](https://user-images.githubusercontent.com/73703641/128670211-3334709c-9caf-4240-b509-2b1aa772e9df.png)
+![s3-2](https://user-images.githubusercontent.com/73703641/128670209-1bdc1811-e734-429b-a8e1-17c3118ba854.png)
+
+3. CodeDeploy를 통해 서버로 실행 파일을 업데이트 합니다.
+   
+![codedeploy](https://user-images.githubusercontent.com/73703641/128670208-1bf70aa2-db73-4f86-9736-eafab94e9147.png)
+   
+4. 자동으로 셀 스크립트를 실행하도록 설정합니다.
+   
+![배포후](https://user-images.githubusercontent.com/73703641/128670563-311d1a8d-98cd-430f-a0a7-d1960548f045.png)
+![배포후2](https://user-images.githubusercontent.com/73703641/128670558-3476b0e3-f54c-49e3-8e69-c3aa0a4e12f8.png)
+
+5. 자동화 스크립트
+
+```shell
+#!/bin/bash
+BASE_PATH=/home/.../nonstop
+BUILD_PATH=$(ls $BASE_PATH/SpringMVCBoard/.../*.war)
+WAR_NAME=$(basename $BUILD_PATH)
+
+# build 파일 복사
+DEPLOY_PATH=$BASE_PATH/war/
+cp $BUILD_PATH $DEPLOY_PATH
+
+#현재 구동중인 Set 확인
+CURRENT_PROFILE=$(curl -s http://localhost/profile)
+echo "> $CURRENT_PROFILE"
+
+```
+#### /profile는 현재 실행환경을 보여주도록 Mapping 했습니다
+
+```java
+    @GetMapping("/profile")
+    public String getProfile(){
+            return Arrays.stream(environment.getActiveProfiles())
+                .findFirst()
+                .orElse("");
+            }
+```
+
+
+```shell
+# 쉬고 있는 set 찾기: set1이 사용중이면 set2가 쉬고 있고, 반대면 set1이 쉬고 있음
+if [ $CURRENT_PROFILE == set1 ]
+then
+  IDLE_PROFILE=set2
+  IDLE_PORT=8002
+elif [ $CURRENT_PROFILE == set2 ]
+then
+  IDLE_PROFILE=set1
+  IDLE_PORT=8001
+else
+  echo "> 일치하는 Profile이 없습니다. Profile: $CURRENT_PROFILE"
+  echo "> set1을 할당합니다. IDLE_PROFILE: set1"
+  IDLE_PROFILE=set1
+  IDLE_PORT=8001
+fi
+
+# war 파일 교체
+IDLE_APPLICATION=$IDLE_PROFILE-SpringMVCBoard.war
+IDLE_APPLICATION_PATH=$DEPLOY_PATH$IDLE_APPLICATION
+
+ln -Tfs $DEPLOY_PATH$WAR_NAME $IDLE_APPLICATION_PATH
+
+echo "> $IDLE_PROFILE 에서 구동중인 애플리케이션 pid 확인"
+IDLE_PID=$(pgrep -f $IDLE_APPLICATION)
+
+if [ -z $IDLE_PID ]
+then
+  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+else
+  echo "> kill -15 $IDLE_PID"
+  sudo kill -15 $IDLE_PID
+  sleep 5
+fi
+
+echo "> $IDLE_PROFILE 배포"
+nohup java -jar -Dspring.profiles.active=$IDLE_PROFILE $IDLE_APPLICATION_PATH &
+
+echo "> $IDLE_PROFILE 10초 후 Health check 시작"
+echo "> curl -s http://localhost:$IDLE_PORT/actuator/health "
+sleep 10
+
+```
+스프링부트의 Actuator를 활용하여 서버가 정상적으로 작동하는지 테스트합니다.
+
+![액츄에이터](https://user-images.githubusercontent.com/73703641/128672018-f15d516d-c31e-4dd0-91e5-a5ff55265a02.png)
+
+
+```shell
+
+for retry_count in {1..4}
+do
+  response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
+  up_count=$(echo $response | grep 'UP' | wc -l)
+
+  if [ $up_count -ge 1 ]
+
+  then # $up_count >= 1 ("UP" 문자열이 있는지 검증)
+      echo "> Health check 성공"
+      break
+  else
+      echo "> Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다."
+      echo "> Health check: ${response}"
+  fi
+
+  if [ $retry_count -eq 4 ]
+  then
+    echo "> Health check 실패. "
+    echo "> Nginx에 연결하지 않고 배포를 종료합니다."
+    exit 1
+  fi
+
+  echo "> Health check 연결 실패. 재시도..."
+  sleep 3
+done
+
+echo "> 스위칭"
+sleep 10
+
+#nginx가 배포 시점에 바라보는 Profile을 자동으로 변경해주도록 하는 스크립트 실행
+/home/.../nonstop/switch.sh
+
+```
+
+nginx를 동적 프록시 환경으로 구축했습니다.
+
+service-url.inc
+```
+set $service_url http://127.0.0.1:8001;
+```
+
+nginx.conf
+```
+        include /etc/nginx/conf.d/service-url.inc;
+
+        location / {
+                proxy_pass $service_url;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+        }
+```
+
+nginx Port 변환을 자동으로 해주는 스크립트
+```shell
+#!/bin/bash
+echo "> 현재 구동중인 Port 확인"
+CURRENT_PROFILE=$(curl -s http://localhost/profile)
+
+# 쉬고 있는 set 찾기: set1이 사용중이면 set2가 쉬고 있고, 반대면 set1이 쉬고 있음
+if [ $CURRENT_PROFILE == set1 ]
+then
+  IDLE_PORT=8002
+elif [ $CURRENT_PROFILE == set2 ]
+then
+  IDLE_PORT=8001
+else
+  echo "> 일치하는 Profile이 없습니다. Profile: $CURRENT_PROFILE"
+  echo "> 8001을 할당합니다."
+  IDLE_PORT=8001
+fi
+
+echo "> 전환할 Port: $IDLE_PORT"
+echo "> Port 전환"
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" |sudo tee /etc/nginx/conf.d/service-url.inc
+
+PROXY_PORT=$(curl -s http://localhost/profile)
+echo "> Nginx Current Proxy Port: $PROXY_PORT"
+
+echo "> Nginx Reload"
+sudo service nginx reload
+```
+
+---
+
+#### HTTPS
+
+certbot / let'sEncrypt 를 사용하여 SSL 인증을 받았습니다.
+
+![https1](https://user-images.githubusercontent.com/73703641/128672882-b7dc4092-e6da-48ab-b1f4-fdf2e8ff1b1a.png)
+![https2](https://user-images.githubusercontent.com/73703641/128672885-a3fbffa4-cfb2-4704-b8f3-dbd646e2c909.png)
+
+---
+
+## 느낀점
+
+1. 직전 회사에서 개발직은 아니었지만 작은 회사라 제가 직접 100명정도 사용하는 출퇴근 기록/조회기를 만들어 운영해본적이 있습니다.
+   이 기회를 통해서 각종 검증에 대한 중요성을 알게 되었고, 회원가입부터 로그인, 글쓰기 등 전반적인 분야에서 빈값 검증이나 정규식 검증을 구현해보려고 노력했습니다.
+   하지만 부족한 부분도 많다고 생각하고 완벽하게 하기는 어려웠습니다. 각종 기능 구현보다 버그 수정이나 검증 구현에서 고민해야 하는것이 더 많다고 느꼈습니다.
+      
+
+
+2. 제가 대부분 부트스트랩을 활용했지만 제가 원하는대로 조금씩 수정하는 것이 쉽지는 않았습니다. 완전히 백엔드 포지션으로 일하지 않는 이상 HTML, CSS 공부를 해야한다고 느꼈습니다.
+
+
+3. XSS 방어 라이브러리를 적용시켜보고 싶었지만 어려움을 느꼈습니다. 좀 더 공부하여 적용시켜볼 생각입니다.
+
+
+
+4. 협업 할 정도의 프로젝트 규모는 아니지만 협업의 경험을 쌓을 수 없어서 아쉬웠습니다.
+
+
+5. 검색의 중요성을 느꼈습니다. 제가 궁금해 하는것들은 이미 누군가 이미 겪어본 일이고 그저 문제만 해결하려고만 하지 않고 해결 방법을 이해한다면 제 것이 될 수 있다고 생각했습니다.
+
+
+
+3. 본격적으로 회사를 퇴사하고 프로그래밍 공부를 시작한지 2개월 (6.7 시작 ~ 현재 (8.9))이 겨우 지나가는 짧은 공부 기간 동안 많은걸 느꼈습니다. 후회없는 선택이었고, 적성에 잘 맞다는 것입니다. 제 인생에서 공부가 재밌게 느껴지는 것은 이번이 처음인것 같습니다.
