@@ -34,6 +34,7 @@ public class FileStore {
         if (multipartFile.isEmpty()) {
             return null;
         }
+        //업로드 파일명
         String originalFilename = multipartFile.getOriginalFilename();
         //서버에 저장하는 파일명
         String storeFilename = createStoreFilename(originalFilename);

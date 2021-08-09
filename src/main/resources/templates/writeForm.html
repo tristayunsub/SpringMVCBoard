@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-<div class="container">
+<div class="container"  style="max-width: 1100px; min-width: 600px">
   </br>
   <div class="py-5 text-center">
     <h2>글쓰기</h2>
@@ -52,20 +52,6 @@
 </div> <!-- /container -->
 </body>
 <script type="text/javascript">
-  // function hoverdd(t){
-  //   for(var i=0; i<t; i++){
-  //     $('#img_span_'+i).hover(function(){
-  //       $('#deleteButton_'+i).css('visibility','visible');
-  //       $('#addImg_'+i).css('opacity','0.6');
-  //       $('#addImg_'+i).css('border','.5px solid black');
-  //       alert('hi');
-  //     }, function(){
-  //       $('#deleteButton_'+i).css('visibility','hidden');
-  //       $('#addImg_'+i).css('opacity','1');
-  //       $('#addImg_'+i).css('border','');
-  //     })
-  //   }
-  // }
   var fileInfoArr=[];
   function fileRemove(index){
     fileInfoArr.splice(index,1);
@@ -97,17 +83,9 @@
       span.style.display='inline-block';
       span.style.margin='5px';
       span.addEventListener('mouseover',function(){
-        //img
         this.children.item(0).style.opacity='0.6';
         this.children.item(0).style.border='.5px solid black';
         this.children.item(1).style.visibility='visible';
-        // window.document.getElementById("deleteButton_"+i).style.visibility='visible';
-        // window.document.getElementById("addImg_"+i).style.opacity='0.6';
-        // window.document.getElementById("addImg_"+i).style.border='.5px solid black'
-        // $('#deleteButton_'+i).css('visibility','visible');
-        // img.style.opacity='0.6';
-        // img.style.border='.5px solid black'
-        // p.style.visibility='visible';
       });
 
       span.addEventListener('mouseout', function (){
@@ -157,7 +135,6 @@
         reader.readAsDataURL(file);
       }
     }
-    // hoverdd(files.length);
   }
 </script>
 </html>

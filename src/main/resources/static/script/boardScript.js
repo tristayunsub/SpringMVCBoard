@@ -71,8 +71,6 @@ function addComment(){
             $('#commentDiv').replaceWith(data);
         },
         error:
-            // function(request,status,error){
-            // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
             function (){
             location.href='/login?redirectURL=/board/list/'+boardId;
             alert("로그인해주세요");

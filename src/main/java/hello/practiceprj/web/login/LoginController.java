@@ -62,7 +62,6 @@ public class LoginController {
             return "user/signupForm";
         }
         userService.signup(user);
-//        User loginUser = loginService.login(user.getUserId(), user.getPassword());
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, user);
         return "redirect:/board/list";
