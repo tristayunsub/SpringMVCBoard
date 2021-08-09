@@ -48,10 +48,10 @@
 ---
 
 ## 기능
-> ###회원가입/로그인
+> ### 회원가입/로그인
 >> 회원가입
 
-###빈칸/Null 검증
+### 빈칸/Null 검증
 
 ![빈칸 검증](https://user-images.githubusercontent.com/73703641/128650238-b24543bd-888a-4fb5-8a14-30fe16e84f7f.gif)
 
@@ -80,7 +80,7 @@ public class User {
 ```
 ---
 
-###중복 ID 검사
+### 중복 ID 검사
 ![이미 사용중인 아이디](https://user-images.githubusercontent.com/73703641/128650155-5a2749b9-7a2d-4789-9e09-055ceedea40f.gif)
 
 동일한 ID가 존재할 때도 역시 에러가 표시되도록 했습니다.
@@ -95,13 +95,13 @@ public class User {
 ```
 
 ---
-###비밀번호 확인
+### 비밀번호 확인
 ![비밀번호 다름](https://user-images.githubusercontent.com/73703641/128650448-a92bda90-55e1-4579-95d6-0c4b0320986f.gif)
 
 JavaScript를 통해서 비밀번호가 일치하는지 확인하도록 했습니다.
 
 ---
-###이메일 인증
+### 이메일 인증
 ![이메일인증](https://user-images.githubusercontent.com/73703641/128650784-d2df0de0-a347-484e-837d-9a1f7c304b09.gif)
 
 ```java
@@ -129,7 +129,7 @@ JavaScript를 통해서 비밀번호가 일치하는지 확인하도록 했습�
 JavaScript를 통해서 이메일 인증이 되지 않았으면 Submit하지 않고 Return 하도록 했습니다.
 
 ---
-###회원가입 결과
+### 회원가입 결과
 ![회원가입완료](https://user-images.githubusercontent.com/73703641/128651210-762d8fca-6e37-48f3-bd68-8d93e13b3db9.png)
 
 Spring Security와 BCryptPassword를  통하여 암호화된  비밀번호가 DB에 저장되도록 했습니다.
@@ -141,7 +141,7 @@ Spring Security와 BCryptPassword를  통하여 암호화된  비밀번호가 DB
 ```
 
 ---
-> ###회원가입/로그인
+> ### 회원가입/로그인
 >> 로그인
 
 Spring Security를 활용하여 로그인 인증을 구현했습니다.
@@ -169,14 +169,14 @@ Spring Security를 활용하여 로그인 인증을 구현했습니다.
                         .permitAll();
         }
 ```
-###로그인 실패시
+### 로그인 실패시
 
 ![로그인실패](https://user-images.githubusercontent.com/73703641/128661469-2afa65cc-eb32-47b9-b01c-549139a1668f.gif)
 
 
 ---
 
-> ###게시판 기능
+> ### 게시판 기능
 >> 글쓰기
 
 기본적인 제목/내용을 작성하고, 이미지 업로드 (미리보기 기능) 을 구현했습니다.
@@ -194,7 +194,7 @@ DB에는 중복이 되지 않게 UUID를 이용한 난수 파일명과 업로드
 
 ---
 
-> ###게시판 기능
+> ### 게시판 기능
 >> 글 수정/삭제
 
 Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 정보를 가져와 자신의 글만 수정/삭제 가능하도록 했습니다.
@@ -235,7 +235,7 @@ Get요청에서 로그인된 유저를 확인하여 일치하지 않으면 이�
 
 
 ---
-> ###게시판 기능
+> ### 게시판 기능
 >>조회수 기능
 
 게시물에 대한 Get요청이 올때 DB에 있는 HIT 컬럼에 1을 더하도록 했습니다.   
@@ -266,7 +266,7 @@ Get요청에서 로그인된 유저를 확인하여 일치하지 않으면 이�
         }
 ```
 
-> ###게시판 기능
+> ### 게시판 기능
 >>댓글 / 대댓글
 
 댓글 / 대댓글은 ajax 비동기 방식으로 구현했습니다.
@@ -303,7 +303,7 @@ Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 
 
 ---
 
-> ###게시판 기능
+> ### 게시판 기능
 >>추천 기능
 
 추천 기능 또한 ajax 통신으로 구현했으며 중복을 방지하기 위해   
@@ -312,7 +312,7 @@ Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 
 ![게시물 추천](https://user-images.githubusercontent.com/73703641/128665032-91c12eb2-da2b-47f7-8ad9-2d842ee096b2.gif)
 
 ---
-> ###게시판 기능
+> ### 게시판 기능
 >>페이징
  
 페이징 기능은 thymeleaf를 적극 활용하였고 처음 페이지와 마지막 페이지에 각각 Previous / Next 버튼이 비활성화 되도록 했습니다.
@@ -347,7 +347,7 @@ Spring Security의 @AuthenticationPrincipal 어노테이션을 통해 로그인 
 ```
 
 ---
-> ###게시판 기능
+> ### 게시판 기능
 >>게시물 검색
 
 게시물 검색은 제목, 제목+내용 , 글쓴이로 검색할 수 있도록 했으며 일치하는게 없을 때에는 검색 결과가 없다는 메시지를 출력하도록 했습니다.
