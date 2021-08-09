@@ -28,9 +28,6 @@ public class UserInfo implements UserDetails {
     private Date signupDate;
     private Collection<? extends GrantedAuthority> authorities;
 
-//    public UserInfo(User user) {
-//        this.user = user;
-//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -79,7 +79,7 @@
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-form-label col-4"  >이메일</label>
+      <label class="col-form-label col-4"  >이메일*</label>
       <div class="col-8">
         <input type="email" th:field="*{email}" th:errorclass="field-error" class="form-control form-control-sm col-8" maxlength=40/ >
         <span style="float: right;font-size: 14px;color: red" id="nonValidated"></span>
@@ -117,7 +117,7 @@
 </div> <!-- /container -->
 </body>
 <script type="text/javascript">
-  var emailValidated;
+  var emailValidated = 0;
   function signup(){
     var p1 = document.getElementById('password').value;
     var p2 = document.getElementById('password2').value;
@@ -130,7 +130,7 @@
 
     if(emailValidated == 0) {
       $('#email').addClass('field-error');
-      $('#nonValidated').text = '이메일 인증은 필수 입니다.';
+      document.getElementById('nonValidated').innerText='이메일 인증은 필수입니다.';
       return;
     }
 

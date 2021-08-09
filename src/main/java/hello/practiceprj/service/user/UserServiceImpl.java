@@ -58,14 +58,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return user;
     }
 
-    public UserInfo login(String loginId, String password){
-        UserInfo user = loadUserByUsername(loginId);
-        if(bCryptPasswordEncoder.matches(password, user.getPassword())){
-            System.out.println("맞음");
-            return null;
-        }else{
-            System.out.println("틀림");
-        }
-        return user;
-    }
+//    public UserInfo login(String loginId, String password){
+//        UserInfo user = loadUserByUsername(loginId);
+//        if(bCryptPasswordEncoder.matches(password, user.getPassword())){
+//            System.out.println("맞음");
+//            return null;
+//        }else{
+//            System.out.println("틀림");
+//        }
+//        return user;
+//    }
 }
