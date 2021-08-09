@@ -29,35 +29,10 @@ public class LoginController {
         return "user/loginForm";
     }
 
-//    @RequestMapping("/login/auth")
-//    public String login(@Validated @ModelAttribute LoginForm form,
-//                        BindingResult bindingResult, HttpServletRequest request,
-//                        @RequestParam(defaultValue = "/board/list") String redirectURL,@PathVariable String success) {
-//        System.out.println(success);
-//        System.out.println("오나?");
-//        if (bindingResult.hasErrors()) {
-//            System.out.println(bindingResult);
-//            return "user/loginForm";
-//        }
-//
-//        UserInfo user = userService.loadUserByUsername(form.getUserId());
-//        UserInfo loginUser = userService.login(user.getUsername(), user.getPassword());
-//        if (loginUser == null) {
-//            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
-//            return "user/loginForm";
-//        }
-//        HttpSession session = request.getSession();
-//        session.setAttribute(SessionConst.LOGIN_USER, loginUser);
-//        return "redirect:" + redirectURL;
-//    }
 
     @RequestMapping("/login/success")
     public String loginSuccess(){
         return null;
-    }
-    @RequestMapping("/error")
-    public String loginFailure(){
-        return "user/error";
     }
 
     @GetMapping("/logout")
